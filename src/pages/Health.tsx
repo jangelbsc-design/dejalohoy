@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
 import { differenceInMinutes } from 'date-fns';
 import { CheckCircle2, Circle } from 'lucide-react';

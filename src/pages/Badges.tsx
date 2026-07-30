@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
 import { calculateFreeTimeInDays, calculateMoneySaved } from '../core/utils/calculations';
 import { Lock, Star } from 'lucide-react';
