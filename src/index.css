@@ -1,8 +1,8 @@
-:root {
-  --primary: #0e8f80;
-  --primary-dark: #0b7a6d;
-  --background-start: #11998e;
-  --background-end: #38ef7d;
+﻿:root {
+  --primary: #00ACC1;
+  --primary-dark: #00838F;
+  --background-start: #00BCD4;
+  --background-end: #006064;
   --surface: rgba(255, 255, 255, 0.92);
   --surface-hover: rgba(255, 255, 255, 0.98);
   --text: #2B2D42;
@@ -32,7 +32,7 @@ button {
 }
 
 body {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
   min-height: 100vh;
   min-height: 100dvh;
   color: var(--text);
@@ -517,7 +517,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .guide-header {
@@ -960,7 +960,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .wishlist-header {
@@ -1201,7 +1201,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .medals-header {
@@ -1318,7 +1318,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .health-header {
@@ -1729,7 +1729,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .life-header {
@@ -1927,7 +1927,7 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(160deg, #00BCD4 0%, #0097A7 45%, #006064 100%);
 }
 
 .ach-header {
@@ -2154,3 +2154,4 @@ html {
 .profile-message-error {
   color: #c62828;
 }
+
