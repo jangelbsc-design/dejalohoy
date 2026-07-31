@@ -53,18 +53,6 @@ body {
   flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  #root {
-    max-width: 720px;
-  }
-}
-
-@media (min-width: 1200px) {
-  #root {
-    max-width: 860px;
-  }
-}
-
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
