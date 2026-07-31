@@ -83,7 +83,7 @@ export default function Dashboard() {
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>
         </div>
 
-        <div className="dash-card">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/life')}>
           <span className="dash-label">Vida Recuperada</span>
           <ClockFaceIcon size={40} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>

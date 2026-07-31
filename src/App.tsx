@@ -3,6 +3,7 @@ import { useStore } from './store/useStore';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Health from './pages/Health';
+import LifeRecovered from './pages/LifeRecovered';
 import Wishlist from './pages/Wishlist';
 import Medals from './pages/Medals';
 
@@ -27,6 +28,7 @@ function Layout() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/medals" element={<Medals />} />
           <Route path="/health" element={<Health />} />
+          <Route path="/life" element={<LifeRecovered />} />
         </Routes>
       </div>
     </div>
