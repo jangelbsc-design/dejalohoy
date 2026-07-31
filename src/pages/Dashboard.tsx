@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
-import { useAuthStore } from '../store/authStore';
-import { X, Save, Trash2, Camera, XCircle, Heart, LogOut, User } from 'lucide-react';
+import { X, Save, Trash2, Camera, XCircle, Heart, User } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -76,11 +75,6 @@ export default function Dashboard() {
     });
   };
 
-  const handleLogout = () => {
-    useAuthStore.getState().logout();
-    navigate('/');
-  };
-
   const handlePhotoUpload = (file: File | undefined | null) => {
     if (!file) return;
     const reader = new FileReader();
@@ -127,6 +121,10 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
+
+      <button className="dash-profile-btn" onClick={() => navigate('/profile')} aria-label="Mi perfil">
+        <User size={20} />
+      </button>
 
       <h1 className="dash-title">Dejalo Hoy</h1>
       <p className="dash-subtitle">Cada segundo sin fumar es una victoria</p>
@@ -202,18 +200,6 @@ export default function Dashboard() {
           <StopHandIcon size={96} />
           <span className="dash-value">Leeme primero</span>
         </div>
-      </div>
-
-      <div className="dash-actions">
-        <button className="btn-assistant" onClick={() => navigate('/profile')}>
-          <User size={24} />
-          Mi perfil
-        </button>
-
-        <button className="btn-logout" onClick={handleLogout}>
-          <LogOut size={24} />
-          Cerrar sesión
-        </button>
       </div>
 
       {/* Modal Diario */}

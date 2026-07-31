@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useStore } from '../store/useStore';
-import { ArrowLeft, KeyRound, User, Cigarette } from 'lucide-react';
+import { ArrowLeft, KeyRound, User, Cigarette, LogOut } from 'lucide-react';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -10,6 +10,11 @@ export default function Profile() {
   const changePassword = useAuthStore((state) => state.changePassword);
   const profile = useStore((state) => state.profile);
   const setProfile = useStore((state) => state.setProfile);
+
+  const handleLogout = () => {
+    useAuthStore.getState().logout();
+    navigate('/');
+  };
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -84,6 +89,11 @@ export default function Profile() {
         <p className="profile-note">
           Tus datos se guardan en este dispositivo. Si perdés o querés cambiar tus llaves de ingreso, podés colocarlas de nuevo acá.
         </p>
+
+        <button className="btn-logout profile-logout" onClick={handleLogout}>
+          <LogOut size={20} />
+          Cerrar sesión
+        </button>
       </div>
 
       <div className="profile-card">
