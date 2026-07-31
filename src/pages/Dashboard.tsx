@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { AlertTriangle, MessageCircle, Frown, X } from 'lucide-react';
+import { useDiaryStore } from '../store/diaryStore';
+import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2 } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, HourglassIcon, StopHandIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -22,6 +23,9 @@ export default function Dashboard() {
   const [showDiary, setShowDiary] = useState(false);
   const [showNoFumes, setShowNoFumes] = useState(false);
   const [diaryEntry, setDiaryEntry] = useState('');
+  const diaryEntries = useDiaryStore((state) => state.entries);
+  const addDiaryEntry = useDiaryStore((state) => state.addEntry);
+  const removeDiaryEntry = useDiaryStore((state) => state.removeEntry);
 
   const [time, setTime] = useState<FreeTime>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [money, setMoney] = useState(0);
@@ -54,6 +58,24 @@ export default function Dashboard() {
     if (confirmed) {
       resetProfile();
     }
+  };
+
+  const handleSaveDiary = () => {
+    const text = diaryEntry.trim();
+    if (!text) return;
+    addDiaryEntry(text);
+    setDiaryEntry('');
+  };
+
+  const formatDiaryDate = (iso: string): string => {
+    const date = new Date(iso);
+    return date.toLocaleString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   const safeNumber = (val: number | undefined | null): number => val ?? 0;
@@ -183,16 +205,42 @@ export default function Dashboard() {
               <X size={20} />
             </button>
             <h2 className="modal-title">Mi Diario</h2>
-            <p className="modal-body">Escribe cómo te sientes en este momento. Desahogarte ayuda a liberar la ansiedad.</p>
+            <p className="modal-body">Escribe cómo te sientes en este momento y guarda tu registro. Desahogarte ayuda a liberar la ansiedad.</p>
             <textarea
               className="diary-textarea"
               placeholder="Hoy me siento..."
               value={diaryEntry}
               onChange={(e) => setDiaryEntry(e.target.value)}
-              rows={6}
+              rows={4}
             />
-            {diaryEntry && (
-              <p className="modal-quote" style={{ marginTop: '12px' }}>Gracias por escribir. Reconocer tus emociones es un gran paso. ✨</p>
+            <button className="diary-save-btn" onClick={handleSaveDiary} disabled={!diaryEntry.trim()}>
+              <Save size={18} />
+              Guardar registro
+            </button>
+
+            {diaryEntries.length > 0 ? (
+              <div className="diary-list">
+                <h3 className="diary-list-title">Mis registros ({diaryEntries.length})</h3>
+                {diaryEntries.map((entry) => (
+                  <div key={entry.id} className="diary-entry">
+                    <span className="diary-entry-date">
+                      <strong>{formatDiaryDate(entry.createdAt)}</strong>
+                    </span>
+                    <p className="diary-entry-text">{entry.text}</p>
+                    <button
+                      className="diary-entry-delete"
+                      onClick={() => removeDiaryEntry(entry.id)}
+                      aria-label="Eliminar registro"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="modal-quote" style={{ marginTop: '16px' }}>
+                Aún no tienes registros. Guarda el primero y empieza a desahogarte. ✨
+              </p>
             )}
           </div>
         </div>

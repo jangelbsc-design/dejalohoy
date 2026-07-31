@@ -314,6 +314,95 @@ body {
   border-color: var(--primary);
 }
 
+.diary-save-btn {
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.diary-save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.diary-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.diary-list {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.diary-list-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.diary-entry {
+  background: rgba(102, 126, 234, 0.07);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: 12px;
+  padding: 12px;
+  position: relative;
+}
+
+.diary-entry-date {
+  display: block;
+  font-size: 11px;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.diary-entry-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.diary-entry-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #b0bec5;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.diary-entry-delete:hover {
+  color: var(--danger);
+  background: rgba(239, 35, 60, 0.1);
+}
+
 /* Legacy styles (keep for other pages) */
 .page-container {
   flex: 1;
