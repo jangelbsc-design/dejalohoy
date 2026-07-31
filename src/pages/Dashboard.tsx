@@ -103,7 +103,7 @@ export default function Dashboard() {
         <div className="dash-card">
           <span className="dash-label">Tiempo Sin Fumar</span>
           <Hourglass size={36} className="dash-icon" />
-          <span className="dash-value">{time.days}d {time.hours}h {time.minutes}m</span>
+          <span className="dash-value">{time.days}d {time.hours}h {time.minutes}m {time.seconds}s</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowNoFumes(true)}>
