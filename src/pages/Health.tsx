@@ -194,7 +194,7 @@ export default function Health() {
       const canvas = await html2canvas(shareCardRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#667eea',
+        backgroundColor: '#11998e',
       });
 
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));

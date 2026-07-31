@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Déjalo Hoy 🚭</title>
+  <script>
+    var current = window.location.pathname + window.location.search + window.location.hash;
+    var target = window.location.pathname.split('/').slice(0, 2).join('/') + '/?p=' + encodeURIComponent(current);
+    window.location.replace(target);
+  </script>
+</head>
+<body></body>
+</html>

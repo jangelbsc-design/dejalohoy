@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
-import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2, Link2, Camera, XCircle, Heart } from 'lucide-react';
-import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, HourglassIcon, StopHandIcon } from '../components/CartoonIcons';
+import { useAuthStore } from '../store/authStore';
+import { MessageCircle, X, Save, Trash2, Camera, XCircle, Heart, LogOut, User } from 'lucide-react';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -18,13 +19,10 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
   const profile = useStore((state) => state.profile);
-  const resetProfile = useStore((state) => state.resetProfile);
   const [showAssistant, setShowAssistant] = useState(false);
-  const [showAnxiety, setShowAnxiety] = useState(false);
   const [showDiary, setShowDiary] = useState(false);
   const [showNoFumes, setShowNoFumes] = useState(false);
   const [diaryEntry, setDiaryEntry] = useState('');
-  const [linkCopied, setLinkCopied] = useState(false);
   const diaryEntries = useDiaryStore((state) => state.entries);
   const addDiaryEntry = useDiaryStore((state) => state.addEntry);
   const removeDiaryEntry = useDiaryStore((state) => state.removeEntry);
@@ -59,13 +57,6 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [profile]);
 
-  const handleCai = () => {
-    const confirmed = window.confirm('¿Has fumado? Esto reiniciará todo tu progreso. ¿Estás seguro?');
-    if (confirmed) {
-      resetProfile();
-    }
-  };
-
   const handleSaveDiary = () => {
     const text = diaryEntry.trim();
     if (!text) return;
@@ -84,31 +75,9 @@ export default function Dashboard() {
     });
   };
 
-  const buildShareLink = (): string => {
-    const base = `${window.location.origin}${window.location.pathname}`;
-    const params = new URLSearchParams();
-    if (profile?.startDate) params.set('start', profile.startDate);
-    params.set('cigsPerDay', String(safeNumber(profile?.cigsPerDay)));
-    params.set('cigsPerPack', String(safeNumber(profile?.cigsPerPack)));
-    params.set('pricePerPack', String(safeNumber(profile?.pricePerPack)));
-    params.set('yearsSmoking', String(safeNumber(profile?.yearsSmoking)));
-    return `${base}#/?${params.toString()}`;
-  };
-
-  const handleShareLink = async () => {
-    const link = buildShareLink();
-    try {
-      await navigator.clipboard.writeText(link);
-    } catch {
-      const fallback = document.createElement('textarea');
-      fallback.value = link;
-      document.body.appendChild(fallback);
-      fallback.select();
-      document.execCommand('copy');
-      document.body.removeChild(fallback);
-    }
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2500);
+  const handleLogout = () => {
+    useAuthStore.getState().logout();
+    navigate('/');
   };
 
   const handlePhotoUpload = (file: File | undefined | null) => {
@@ -140,89 +109,116 @@ export default function Dashboard() {
 
   const safeNumber = (val: number | undefined | null): number => val ?? 0;
 
+  const years = Math.floor(time.days / 365);
+  const months = Math.floor((time.days % 365) / 30);
+
+  const mainTitle = years >= 1
+    ? `${years} ${years === 1 ? 'año' : 'años'}${months > 0 ? ` ${months} ${months === 1 ? 'mes' : 'meses'}` : ''}`
+    : months >= 1
+      ? `${months} ${months === 1 ? 'mes' : 'meses'}`
+      : time.days >= 1
+        ? `${time.days} ${time.days === 1 ? 'día' : 'días'}`
+        : time.hours >= 1
+          ? `${time.hours} ${time.hours === 1 ? 'hora' : 'horas'}`
+          : `${time.minutes} ${time.minutes === 1 ? 'minuto' : 'minutos'}`;
+
+  const pad = (n: number): string => String(n).padStart(2, '0');
+
   return (
     <div className="dashboard">
 
       <h1 className="dash-title">Dejalo Hoy</h1>
       <p className="dash-subtitle">Cada segundo sin fumar es una victoria</p>
 
+      <div className="counter-hero">
+        <span className="counter-hero-label">Tiempo sin fumar</span>
+        <h2 className="counter-hero-title">{mainTitle}</h2>
+        <div className="counter-hero-units">
+          <div className="counter-unit">
+            <span className="counter-unit-number">{time.days}</span>
+            <span className="counter-unit-label">Días</span>
+          </div>
+          <div className="counter-unit">
+            <span className="counter-unit-number">{pad(time.hours)}</span>
+            <span className="counter-unit-label">Horas</span>
+          </div>
+          <div className="counter-unit">
+            <span className="counter-unit-number">{pad(time.minutes)}</span>
+            <span className="counter-unit-label">Minutos</span>
+          </div>
+          <div className="counter-unit counter-unit-seconds">
+            <span className="counter-unit-number">{pad(time.seconds)}</span>
+            <span className="counter-unit-label">Segundos</span>
+          </div>
+        </div>
+      </div>
+
       <div className="dash-grid">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/guide')}>
+          <span className="dash-label">Guía Asistida</span>
+          <BrainIcon size={64} />
+          <span className="dash-value">Ver ahora</span>
+        </div>
+
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/wishlist')}>
           <span className="dash-label">Dinero Ahorrado</span>
-          <MoneyBagIcon size={40} />
+          <MoneyBagIcon size={64} />
           <span className="dash-value">Bs {safeNumber(money).toFixed(2)}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/medals')}>
           <span className="dash-label">Cigarros No Fumados</span>
-          <BrokenCigaretteIcon size={40} />
+          <BrokenCigaretteIcon size={64} />
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/health')}>
           <span className="dash-label">Salud Ganada</span>
-          <SmilingHeartIcon size={40} />
+          <SmilingHeartIcon size={64} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/life')}>
           <span className="dash-label">Vida Recuperada</span>
-          <ClockFaceIcon size={40} />
+          <ClockFaceIcon size={64} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/achievements')}>
           <span className="dash-label">Logros Alcanzados</span>
-          <TargetIcon size={40} />
+          <TargetIcon size={64} />
           <span className="dash-value">{time.days >= 1 ? 1 : 0}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowDiary(true)}>
           <span className="dash-label">Diario</span>
-          <OpenBookIcon size={40} />
+          <OpenBookIcon size={64} />
           <span className="dash-value">Escribe</span>
-        </div>
-
-        <div className="dash-card">
-          <span className="dash-label">Tiempo Sin Fumar</span>
-          <HourglassIcon size={40} />
-          <span className="dash-value">{time.days}d {time.hours}h {time.minutes}m {time.seconds}s</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowNoFumes(true)}>
           <span className="dash-label">No lo hagas</span>
-          <StopHandIcon size={40} />
+          <StopHandIcon size={64} />
           <span className="dash-value">Leeme primero</span>
         </div>
       </div>
 
       <div className="dash-actions">
-        <button className="btn-cai" onClick={handleCai}>
-          <AlertTriangle size={24} />
-          ¡Caí!
-        </button>
-
-        <button className="btn-anxiety" onClick={() => setShowAnxiety(true)}>
-          <Frown size={24} />
-          ¡Tengo ansiedad!
-        </button>
-
         <button className="btn-assistant" onClick={() => setShowAssistant(true)}>
           <MessageCircle size={24} />
           Asistente de Caída
         </button>
 
-        <button className="btn-share-link" onClick={handleShareLink}>
-          <Link2 size={24} />
-          {linkCopied ? '¡Enlace copiado!' : 'Compartir mi enlace'}
+        <button className="btn-assistant" onClick={() => navigate('/profile')}>
+          <User size={24} />
+          Mi perfil
+        </button>
+
+        <button className="btn-logout" onClick={handleLogout}>
+          <LogOut size={24} />
+          Cerrar sesión
         </button>
       </div>
-
-      {linkCopied && (
-        <p className="dash-link-hint">
-          Abrí este enlace en tu teléfono y verás tu progreso sin volver a pedir datos.
-        </p>
-      )}
 
       {/* Modal Asistente de Caída */}
       {showAssistant && (
@@ -242,28 +238,6 @@ export default function Dashboard() {
               <li><strong>Retoma tu plan.</strong> Revisa por qué decidiste dejar de fumar. Tus razones siguen siendo válidas.</li>
             </ul>
             <p className="modal-quote">"El éxito no es no caer nunca, sino levantarse cada vez que caes." — Confucio</p>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Ansiedad */}
-      {showAnxiety && (
-        <div className="modal-overlay" onClick={() => setShowAnxiety(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowAnxiety(false)}>
-              <X size={20} />
-            </button>
-            <h2 className="modal-title">¡Tranquilo! Aquí tienes 6 consejos</h2>
-            <p className="modal-body">La ansiedad al dejar de fumar es normal y pasajera. Prueba estas técnicas avaladas por organizaciones de salud:</p>
-            <ul className="modal-list">
-              <li><strong>Respiración 4-7-8 (Mayo Clinic):</strong> Inhala por la nariz 4 segundos, retén 7 segundos, exhala por la boca 8 segundos. Repite 4 veces. Activa el sistema nervioso parasimpático y reduce la ansiedad al instante.</li>
-              <li><strong>Distráete 10 minutos (CDC - Smokefree.gov):</strong> El craving dura solo 15-20 minutos. Mantén tus manos ocupadas: aprieta una pelota antiestrés, escribe, o arma algo. La urgencia pasará.</li>
-              <li><strong>Agua fría (American Cancer Society):</strong> Bebe un vaso de agua fría o lávate la cara. El choque térmico activa el reflejo de inmersión, disminuyendo el ritmo cardíaco y la ansiedad.</li>
-              <li><strong>5 minutos de movimiento (Cleveland Clinic):</strong> Camina rápido, sube escaleras o haz saltos. El ejercicio libera endorfinas (analgésicos naturales) y reduce el deseo de fumar.</li>
-              <li><strong>Identifica tu disparador (NHS):</strong> ¿Café? ¿Estrés? ¿Después de comer? Identificar qué activó el craving te permite anticiparte y romper el ciclo.</li>
-              <li><strong>Apoyo social inmediato (WHO):</strong> Llama a un amigo, manda un mensaje o repite en voz alta: "Esto es pasajero, yo puedo con esto". Compartir reduce la intensidad del craving.</li>
-            </ul>
-            <p className="modal-quote">"La ansiedad es una señal de que estás creciendo, no de que estás fracasando."</p>
           </div>
         </div>
       )}
