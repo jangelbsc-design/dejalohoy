@@ -31,12 +31,21 @@ export const calculateMoneySaved = (
   cigsPerPack: number,
   pricePerPack: number
 ): number => {
-  const packsAvoided = (freeTimeInDays * cigsPerDay) / cigsPerPack;
-  return packsAvoided * pricePerPack;
+  const days = Math.max(0, freeTimeInDays || 0);
+  const perDay = Math.max(0, cigsPerDay || 0);
+  const perPack = Math.max(0, cigsPerPack || 0);
+  const price = Math.max(0, pricePerPack || 0);
+
+  if (perPack === 0 || perDay === 0) return 0;
+
+  const packsAvoided = (days * perDay) / perPack;
+  return Math.round(packsAvoided * price * 100) / 100;
 };
 
 export const calculateCigsAvoided = (freeTimeInDays: number, cigsPerDay: number): number => {
-  return freeTimeInDays * cigsPerDay;
+  const days = Math.max(0, freeTimeInDays || 0);
+  const perDay = Math.max(0, cigsPerDay || 0);
+  return days * perDay;
 };
 
 export interface LifeRecovered {

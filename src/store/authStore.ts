@@ -4,8 +4,19 @@ import { useStore, UserProfileData } from './useStore';
 import { useDiaryStore, DiaryEntry } from './diaryStore';
 import { useWishlistStore, WishlistGoal } from './wishlistStore';
 import { useMotivationStore } from './motivationStore';
-import { isSupabaseConfigured } from '../core/config';
-import { fetchRemoteAccount, upsertRemoteAccount } from '../core/supabase';
+import { isCloudReady } from '../core/supabase';
+import {
+  cloudRegister,
+  cloudLogin,
+  cloudLogout,
+  cloudUpdatePassword,
+  cloudResetPassword,
+  cloudSaveData,
+  cloudLoadData,
+  displayName,
+  usernameFromEmail,
+} from '../core/supabase';
+import { supabase } from '../core/supabaseClient';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -15,18 +26,22 @@ export interface AccountData {
   motivationText: string;
 }
 
-export interface Account {
+export interface LocalAccount {
   passwordHash: string;
   data: AccountData;
 }
 
 interface AuthState {
-  accounts: Record<string, Account>;
   currentUser: string | null;
+  userId: string | null;
+  ready: boolean;
+  accounts: Record<string, LocalAccount>;
   register: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
-  changePassword: (username: string, newPassword: string) => Promise<{ ok: boolean; error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  changePassword: (newPassword: string) => Promise<{ ok: boolean; error?: string }>;
+  resetPassword: (username: string) => Promise<{ ok: boolean; error?: string }>;
+  restoreSession: () => Promise<void>;
 }
 
 function hashPassword(password: string): string {
@@ -58,7 +73,7 @@ function emptyData(): AccountData {
   };
 }
 
-function snapshotStores(): AccountData {
+export function snapshotStores(): AccountData {
   return {
     profile: useStore.getState().profile,
     diary: useDiaryStore.getState().entries,
@@ -68,7 +83,7 @@ function snapshotStores(): AccountData {
   };
 }
 
-function loadIntoStores(data: AccountData) {
+export function loadIntoStores(data: AccountData) {
   useStore.setState({ profile: data.profile });
   useDiaryStore.setState({ entries: data.diary });
   useWishlistStore.setState({ goals: data.goals });
@@ -82,128 +97,182 @@ function clearStores() {
   useMotivationStore.setState({ photo: null, text: '' });
 }
 
+function hasData(data: AccountData | null | undefined): data is AccountData {
+  if (!data) return false;
+  if (data.profile) return true;
+  if (data.diary && data.diary.length > 0) return true;
+  if (data.motivationPhoto) return true;
+  if (data.motivationText) return true;
+  return false;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       accounts: {},
       currentUser: null,
+      userId: null,
+      ready: false,
+
+      restoreSession: async () => {
+        if (isCloudReady()) {
+          if (supabase) {
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+            if (session?.user) {
+              const data = await cloudLoadData();
+              if (data) loadIntoStores(data);
+              set({
+                currentUser: displayName(session.user.email ?? ''),
+                userId: session.user.id,
+                ready: true,
+              });
+            } else {
+              set({ currentUser: null, userId: null, ready: true });
+            }
+          }
+          return;
+        }
+        set({ ready: true });
+      },
 
       register: async (username, password) => {
         const name = username.trim();
-        if (!name) return { ok: false, error: 'Ingresá un nombre de usuario.' };
+        if (!name) return { ok: false, error: 'Ingresá tu usuario o email.' };
         if (password.length < 4) return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
-        if (get().accounts[name]) return { ok: false, error: 'Ese usuario ya existe. Elegí otro o iniciá sesión.' };
 
-        if (isSupabaseConfigured()) {
-          const remote = await fetchRemoteAccount(name);
-          if (remote) return { ok: false, error: 'Ese usuario ya existe en la nube. Iniciá sesión.' };
+        if (isCloudReady()) {
+          const res = await cloudRegister(name, password);
+          if (!res.ok || !res.id) return { ok: false, error: res.error ?? 'No se pudo crear la cuenta.' };
+
+          const isFirstAccount = Object.keys(get().accounts).length === 0;
+          const data = isFirstAccount ? snapshotStores() : emptyData();
+          if (hasData(data)) {
+            await cloudSaveData(data, res.id, usernameFromEmail(res.email ?? name));
+          }
+
+          set({ currentUser: displayName(res.email ?? name), userId: res.id });
+          if (!isFirstAccount) clearStores();
+          return { ok: true };
         }
 
+        if (get().accounts[name]) return { ok: false, error: 'Ese usuario ya existe. Elegí otro o iniciá sesión.' };
         const isFirstAccount = Object.keys(get().accounts).length === 0;
         const data = isFirstAccount ? snapshotStores() : emptyData();
-        const account = { passwordHash: hashPassword(password), data };
-
         set((state) => ({
-          accounts: { ...state.accounts, [name]: account },
+          accounts: { ...state.accounts, [name]: { passwordHash: hashPassword(password), data } },
           currentUser: name,
+          userId: null,
         }));
-
-        if (!isFirstAccount) {
-          clearStores();
-        }
-
-        if (isSupabaseConfigured()) {
-          await upsertRemoteAccount({ username: name, passwordHash: account.passwordHash, data: account.data });
-        }
+        if (!isFirstAccount) clearStores();
         return { ok: true };
       },
 
       login: async (username, password) => {
         const name = username.trim();
-        if (!name) return { ok: false, error: 'Ingresá un nombre de usuario.' };
-        const hash = hashPassword(password);
-        const local = get().accounts[name];
+        if (!name) return { ok: false, error: 'Ingresá tu usuario o email.' };
+        if (password.length < 4) return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
 
-        if (local) {
-          if (local.passwordHash !== hash) return { ok: false, error: 'Contraseña incorrecta.' };
-          set({ currentUser: name });
-          loadIntoStores(local.data);
+        if (isCloudReady()) {
+          let res = await cloudLogin(name, password);
+          if (!res.ok) {
+            const local = get().accounts[name];
+            if (local && local.passwordHash === hashPassword(password)) {
+              const reg = await cloudRegister(name, password);
+              if (reg.ok && reg.id) {
+                if (hasData(local.data)) {
+                  await cloudSaveData(local.data, reg.id, usernameFromEmail(reg.email ?? name));
+                }
+                res = await cloudLogin(name, password);
+                if (res.ok && res.id) {
+                  const data = await cloudLoadData();
+                  if (data) loadIntoStores(data);
+                  set({ currentUser: displayName(res.email ?? name), userId: res.id });
+                  return { ok: true };
+                }
+              }
+            }
+            return { ok: false, error: res.error ?? 'No se pudo iniciar sesión.' };
+          }
 
-          if (isSupabaseConfigured()) {
-            const remote = await fetchRemoteAccount(name);
-            if (remote && remote.data && useAuthStore.getState().currentUser === name) {
-              loadIntoStores(remote.data);
-              set((state) => ({
-                accounts: { ...state.accounts, [name]: { ...state.accounts[name], data: remote.data } },
-              }));
+          if (!res.id) return { ok: false, error: 'No se pudo iniciar sesión.' };
+          const data = await cloudLoadData();
+          if (hasData(data)) {
+            loadIntoStores(data);
+          } else {
+            const username = usernameFromEmail(res.email ?? name);
+            const local = get().accounts[username] ?? get().accounts[name];
+            if (local && hasData(local.data)) {
+              await cloudSaveData(local.data, res.id, username);
+              loadIntoStores(local.data);
             }
           }
+          set({ currentUser: displayName(res.email ?? name), userId: res.id });
           return { ok: true };
         }
 
-        if (isSupabaseConfigured()) {
-          const remote = await fetchRemoteAccount(name);
-          if (remote) {
-            if (remote.passwordHash !== hash) return { ok: false, error: 'Contraseña incorrecta.' };
-            set((state) => ({
-              accounts: { ...state.accounts, [name]: { passwordHash: hash, data: remote.data } },
-              currentUser: name,
-            }));
-            loadIntoStores(remote.data);
-            return { ok: true };
-          }
-        }
-
-        return { ok: false, error: 'Ese usuario no existe. Creá una cuenta.' };
-      },
-
-      changePassword: async (username, newPassword) => {
-        const name = username.trim();
-        if (!name) return { ok: false, error: 'Ingresá tu nombre de usuario.' };
-        if (newPassword.length < 4) return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
-
+        const hash = hashPassword(password);
         const local = get().accounts[name];
-        let remoteData: AccountData | null = null;
-
-        if (!local && isSupabaseConfigured()) {
-          const remote = await fetchRemoteAccount(name);
-          if (!remote) return { ok: false, error: 'Ese usuario no existe.' };
-          remoteData = remote.data;
-        }
-        if (!local && !remoteData) {
-          return { ok: false, error: 'Ese usuario no existe. Creá una cuenta.' };
-        }
-
-        const newHash = hashPassword(newPassword);
-        set((state) => ({
-          accounts: {
-            ...state.accounts,
-            [name]: {
-              passwordHash: newHash,
-              data: local?.data ?? remoteData ?? emptyData(),
-            },
-          },
-        }));
-
-        if (isSupabaseConfigured()) {
-          const account = useAuthStore.getState().accounts[name];
-          await upsertRemoteAccount({ username: name, passwordHash: newHash, data: account.data });
-        }
+        if (!local) return { ok: false, error: 'Ese usuario no existe. Creá una cuenta.' };
+        if (local.passwordHash !== hash) return { ok: false, error: 'Contraseña incorrecta.' };
+        set({ currentUser: name, userId: null });
+        loadIntoStores(local.data);
         return { ok: true };
       },
 
-      logout: () => {
-        const { currentUser } = get();
-        if (currentUser) {
+      logout: async () => {
+        const { currentUser, userId, accounts } = get();
+        if (isCloudReady() && userId) {
+          await cloudSaveData(snapshotStores(), userId, currentUser ?? '');
+          await cloudLogout();
+        } else if (currentUser && accounts[currentUser]) {
           set((state) => ({
-            accounts: { ...state.accounts, [currentUser]: { ...state.accounts[currentUser], data: snapshotStores() } },
+            accounts: {
+              ...state.accounts,
+              [currentUser]: { ...state.accounts[currentUser], data: snapshotStores() },
+            },
           }));
         }
-        set({ currentUser: null });
+        set({ currentUser: null, userId: null });
         clearStores();
       },
+
+      changePassword: async (newPassword) => {
+        if (newPassword.length < 4) return { ok: false, error: 'La contraseña debe tener al menos 4 caracteres.' };
+        if (isCloudReady()) {
+          const res = await cloudUpdatePassword(newPassword);
+          if (!res.ok) return { ok: false, error: res.error ?? 'Ocurrió un error.' };
+          return { ok: true };
+        }
+        const { currentUser, accounts } = get();
+        if (!currentUser) return { ok: false, error: 'No hay sesión activa.' };
+        const local = accounts[currentUser];
+        if (!local) return { ok: false, error: 'Ese usuario no existe.' };
+        set((state) => ({
+          accounts: {
+            ...state.accounts,
+            [currentUser]: { ...local, passwordHash: hashPassword(newPassword) },
+          },
+        }));
+        return { ok: true };
+      },
+
+      resetPassword: async (username) => {
+        if (isCloudReady()) {
+          return cloudResetPassword(username);
+        }
+        return { ok: false, error: 'La recuperación requiere la nube configurada.' };
+      },
     }),
-    { name: 'dejalohoy-accounts' }
+    {
+      name: 'dejalohoy-accounts',
+      partialize: (state) => ({
+        accounts: state.accounts,
+        currentUser: state.currentUser,
+        userId: state.userId,
+      }),
+    }
   )
 );
 

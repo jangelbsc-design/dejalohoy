@@ -46,8 +46,14 @@ const basePath = import.meta.env.BASE_URL.replace(/\/+$/, '');
 function Layout() {
   const profile = useStore((state) => state.profile);
   const currentUser = useAuthStore((state) => state.currentUser);
+  const ready = useAuthStore((state) => state.ready);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    restoreSession();
+  }, [restoreSession]);
 
   useEffect(() => {
     if (spaPath) {
@@ -57,6 +63,15 @@ function Layout() {
       window.history.replaceState(null, '', window.location.pathname);
     }
   }, [navigate]);
+
+  if (!ready) {
+    return (
+      <div className="boot-screen">
+        <span className="boot-screen-logo">🚭</span>
+        <span className="boot-screen-text">Cargando tu progreso...</span>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <Login />;

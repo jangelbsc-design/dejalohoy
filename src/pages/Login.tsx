@@ -4,19 +4,38 @@ import { useAuthStore } from '../store/authStore';
 export default function Login() {
   const register = useAuthStore((state) => state.register);
   const login = useAuthStore((state) => state.login);
+  const resetPassword = useAuthStore((state) => state.resetPassword);
   const currentUser = useAuthStore((state) => state.currentUser);
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
     setError(null);
+    setInfo(null);
     const result = mode === 'login' ? await login(username, password) : await register(username, password);
     setError(result.ok ? null : result.error ?? 'Ocurrió un error.');
+    setLoading(false);
+  };
+
+  const handleForgot = async () => {
+    if (!username.trim()) {
+      setError('Ingresá tu usuario o email para recuperar la contraseña.');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    setInfo(null);
+    const result = await resetPassword(username);
+    setError(result.ok ? null : result.error ?? 'Ocurrió un error.');
+    if (result.ok) {
+      setInfo('Si la cuenta existe, te enviamos un correo para restablecer tu contraseña.');
+    }
     setLoading(false);
   };
 
@@ -27,8 +46,8 @@ export default function Login() {
         <h1 className="login-title">Déjalo Hoy</h1>
         <p className="login-subtitle">
           {mode === 'login'
-            ? 'Iniciá sesión para cargar el progreso de tu cuenta.'
-            : 'Creá tu cuenta y guardá tu progreso para siempre.'}
+            ? 'Ingresá tus credenciales para cargar tu progreso desde cualquier dispositivo.'
+            : 'Creá tu cuenta y guardá tu progreso en la nube.'}
         </p>
 
         <div className="login-mode">
@@ -37,6 +56,7 @@ export default function Login() {
             onClick={() => {
               setMode('login');
               setError(null);
+              setInfo(null);
             }}
           >
             Iniciar sesión
@@ -46,6 +66,7 @@ export default function Login() {
             onClick={() => {
               setMode('register');
               setError(null);
+              setInfo(null);
             }}
           >
             Crear cuenta
@@ -53,7 +74,7 @@ export default function Login() {
         </div>
 
         <div className="input-group">
-          <label>Usuario</label>
+          <label>Usuario o email</label>
           <input
             type="text"
             autoComplete="username"
@@ -68,7 +89,7 @@ export default function Login() {
           <input
             type="password"
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            placeholder="Tu contraseña"
+            placeholder="Mínimo 4 caracteres"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => {
@@ -78,6 +99,7 @@ export default function Login() {
         </div>
 
         {error && <p className="login-error">{error}</p>}
+        {info && <p className="login-info">{info}</p>}
 
         <button className="btn-primary login-submit" onClick={handleSubmit} disabled={loading}>
           {loading
@@ -87,8 +109,14 @@ export default function Login() {
               : 'Crear cuenta y empezar'}
         </button>
 
+        {mode === 'login' && (
+          <button className="login-forgot" onClick={handleForgot} disabled={loading}>
+            ¿Olvidaste tu contraseña?
+          </button>
+        )}
+
         <p className="login-note">
-          Tus datos se guardan solo en este dispositivo. {currentUser ? `Sesión: ${currentUser}` : ''}
+          {currentUser ? `Sesión: ${currentUser}` : 'Tu progreso se sincroniza con la nube.'}
         </p>
       </div>
     </div>
