@@ -31,6 +31,13 @@ button {
   touch-action: manipulation;
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background: linear-gradient(160deg, #8E7AF0 0%, #C76EE6 50%, #FF5A85 100%);
   min-height: 100vh;
@@ -46,11 +53,14 @@ body {
 #root {
   width: 100%;
   max-width: 480px;
+  min-width: 0;
+  margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -565,7 +575,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .guide-header {
@@ -1008,7 +1017,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .wishlist-header {
@@ -1249,7 +1257,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .medals-header {
@@ -1366,7 +1373,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .health-header {
@@ -1777,7 +1783,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .life-header {
@@ -1975,7 +1980,6 @@ html {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(160deg, #C5A880 0%, #A67B5B 45%, #6F4E37 100%);
 }
 
 .ach-header {
