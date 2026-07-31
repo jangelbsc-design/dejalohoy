@@ -31,13 +31,6 @@ button {
   touch-action: manipulation;
 }
 
-html,
-body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
 body {
   background: linear-gradient(160deg, #8E7AF0 0%, #C76EE6 50%, #FF5A85 100%);
   min-height: 100vh;
@@ -53,14 +46,11 @@ body {
 #root {
   width: 100%;
   max-width: 480px;
-  min-width: 0;
-  margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
