@@ -1,6 +1,5 @@
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useStore } from './store/useStore';
-import BottomNav from './components/BottomNav';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Health from './pages/Health';
@@ -32,7 +31,6 @@ function Layout() {
           <Route path="/badges" element={<Badges />} />
         </Routes>
       </div>
-      {profile && <BottomNav />}
     </div>
   );
 }

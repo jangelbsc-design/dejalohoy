@@ -19,22 +19,35 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button {
+  touch-action: manipulation;
 }
 
 body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--text);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   display: flex;
   justify-content: center;
+  overscroll-behavior-y: none;
 }
 
 #root {
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -48,8 +61,8 @@ body {
 /* Dashboard */
 .dashboard {
   flex: 1;
-  padding: 32px 20px;
-  padding-bottom: 100px;
+  padding: calc(32px + env(safe-area-inset-top)) 20px;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
   overflow-y: auto;
 }
 
@@ -304,8 +317,8 @@ body {
 /* Legacy styles (keep for other pages) */
 .page-container {
   flex: 1;
-  padding: 20px;
-  padding-bottom: 90px;
+  padding: calc(20px + env(safe-area-inset-top)) 20px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
   overflow-y: auto;
 }
 
@@ -383,41 +396,11 @@ body {
   border-color: var(--primary);
 }
 
-.bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 0 20px 0;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  gap: 4px;
-  transition: color 0.2s;
-}
-
-.nav-item.active {
-  color: var(--primary);
-}
-
 /* Wishlist Page */
 .wishlist-page {
-  padding: 24px 20px;
+  padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -656,8 +639,9 @@ body {
 
 /* Medals Page */
 .medals-page {
-  padding: 24px 20px;
+  padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
@@ -772,8 +756,9 @@ body {
 
 /* Health Page */
 .health-page {
-  padding: 24px 20px;
+  padding: calc(24px + env(safe-area-inset-top)) 20px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
