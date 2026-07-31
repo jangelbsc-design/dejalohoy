@@ -45,7 +45,7 @@ body {
 
 #root {
   width: 100%;
-  max-width: 480px;
+  max-width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
@@ -246,7 +246,7 @@ html {
 
 .dash-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   margin-bottom: 24px;
 }
@@ -254,18 +254,20 @@ html {
 .dash-card {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
-  border-radius: 28px;
-  padding: 16px 10px;
-  display: flex;
-  flex-direction: column;
+  border-radius: 20px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  grid-template-areas:
+    "icon label"
+    "icon value";
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  column-gap: 14px;
+  row-gap: 2px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.2s ease, background 0.2s ease;
-  aspect-ratio: 1;
-  text-align: center;
+  text-align: left;
 }
 
 .dash-card:hover {
@@ -278,9 +280,16 @@ html {
   cursor: pointer;
 }
 
+.dash-card svg {
+  grid-area: icon;
+  width: 48px;
+  height: 48px;
+}
+
 .dash-label {
-  font-size: 13px;
-  font-weight: 600;
+  grid-area: label;
+  font-size: 15px;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   text-transform: none;
   letter-spacing: normal;
@@ -293,11 +302,18 @@ html {
 }
 
 .dash-value {
-  font-size: 16px;
+  grid-area: value;
+  font-size: 14px;
   font-weight: 700;
   color: white;
   line-height: 1.2;
   text-shadow: none;
+}
+
+@media (min-width: 600px) {
+  .dash-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Action Buttons */
@@ -1310,16 +1326,20 @@ html {
 
 .medals-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .medal {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-areas:
+    "icon num"
+    "icon label";
   align-items: center;
-  gap: 2px;
-  padding: 12px 8px;
+  justify-items: start;
+  column-gap: 12px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1327,6 +1347,7 @@ html {
 }
 
 .medal svg {
+  grid-area: icon;
   transition: filter 0.3s ease;
 }
 
@@ -1340,7 +1361,8 @@ html {
 }
 
 .medal-number {
-  font-size: 15px;
+  grid-area: num;
+  font-size: 16px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.7);
 }
@@ -1351,11 +1373,35 @@ html {
 }
 
 .medal-label {
-  font-size: 9px;
+  grid-area: label;
+  font-size: 10px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+@media (min-width: 600px) {
+  .medals-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .medal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .medal-number {
+    font-size: 15px;
+  }
+
+  .medal-label {
+    font-size: 9px;
+  }
 }
 
 /* Health Page */
@@ -1420,7 +1466,7 @@ html {
 
 .health-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -1428,7 +1474,7 @@ html {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   border-radius: 16px;
-  padding: 14px 10px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1437,7 +1483,6 @@ html {
   box-shadow: var(--card-shadow);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  aspect-ratio: 1;
   text-align: center;
   cursor: pointer;
   position: relative;
@@ -1498,6 +1543,16 @@ html {
   font-size: 10px;
   font-weight: 800;
   color: var(--text-secondary);
+}
+
+@media (min-width: 600px) {
+  .health-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .health-card {
+    aspect-ratio: 1;
+  }
 }
 
 /* Health modal */
@@ -2206,6 +2261,12 @@ html {
 
 .profile-message-error {
   color: #c62828;
+}
+
+@media (min-width: 768px) {
+  #root {
+    max-width: 480px;
+  }
 }
 
 
