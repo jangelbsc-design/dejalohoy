@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { DollarSign, CigaretteOff, Heart, Clock, Target, BookOpen, Hourglass, Hand, AlertTriangle, MessageCircle, Frown, X } from 'lucide-react';
+import { AlertTriangle, MessageCircle, Frown, X } from 'lucide-react';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, HourglassIcon, StopHandIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -66,49 +67,49 @@ export default function Dashboard() {
       <div className="dash-grid">
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/wishlist')}>
           <span className="dash-label">Dinero Ahorrado</span>
-          <DollarSign size={36} className="dash-icon" />
+          <MoneyBagIcon size={40} />
           <span className="dash-value">Bs {safeNumber(money).toFixed(2)}</span>
         </div>
 
         <div className="dash-card">
           <span className="dash-label">Cigarros No Fumados</span>
-          <CigaretteOff size={36} className="dash-icon" />
+          <BrokenCigaretteIcon size={40} />
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
         <div className="dash-card">
           <span className="dash-label">Salud Ganada</span>
-          <Heart size={36} className="dash-icon" />
+          <SmilingHeartIcon size={40} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>
         </div>
 
         <div className="dash-card">
           <span className="dash-label">Vida Recuperada</span>
-          <Clock size={36} className="dash-icon" />
+          <ClockFaceIcon size={40} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>
         </div>
 
         <div className="dash-card">
           <span className="dash-label">Logros Alcanzados</span>
-          <Target size={36} className="dash-icon" />
+          <TargetIcon size={40} />
           <span className="dash-value">{time.days >= 1 ? 1 : 0}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowDiary(true)}>
           <span className="dash-label">Diario</span>
-          <BookOpen size={36} className="dash-icon" />
+          <OpenBookIcon size={40} />
           <span className="dash-value">Escribe</span>
         </div>
 
         <div className="dash-card">
           <span className="dash-label">Tiempo Sin Fumar</span>
-          <Hourglass size={36} className="dash-icon" />
+          <HourglassIcon size={40} />
           <span className="dash-value">{time.days}d {time.hours}h {time.minutes}m {time.seconds}s</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowNoFumes(true)}>
           <span className="dash-label">No lo hagas</span>
-          <Hand size={36} className="dash-icon" />
+          <StopHandIcon size={40} />
           <span className="dash-value">Leeme primero</span>
         </div>
       </div>

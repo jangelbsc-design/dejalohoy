@@ -1,0 +1,122 @@
+interface IconProps {
+  size?: number;
+}
+
+export function MoneyBagIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M18 30 C16 50 21 54 32 54 C43 54 48 50 46 30 C46 26 40 24 32 24 C24 24 18 26 18 30 Z" fill="#66BB6A" stroke="#2E7D32" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M26 24 C26 20 29 17 32 17 C35 17 38 20 38 24" fill="none" stroke="#2E7D32" strokeWidth="3" strokeLinecap="round" />
+      <text x="32" y="39" textAnchor="middle" fontSize="14" fontWeight="900" fill="#FFD54F" fontFamily="Arial, sans-serif">$</text>
+      <circle cx="27" cy="46" r="1.5" fill="#1B5E20" />
+      <circle cx="37" cy="46" r="1.5" fill="#1B5E20" />
+      <path d="M28 50 Q32 52.5 36 50" fill="none" stroke="#1B5E20" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function BrokenCigaretteIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <circle cx="32" cy="32" r="21" fill="#FFCDD2" stroke="#E53935" strokeWidth="3" />
+      <line x1="18" y1="18" x2="46" y2="46" stroke="#E53935" strokeWidth="3.5" strokeLinecap="round" />
+      <g transform="rotate(-25 32 32)">
+        <rect x="21" y="28" width="23" height="7" rx="3" fill="#FFFFFF" stroke="#B0BEC5" strokeWidth="1.5" />
+        <rect x="40" y="28" width="6" height="7" rx="2" fill="#FF9800" />
+        <line x1="31" y1="28" x2="29" y2="35" stroke="#90A4AE" strokeWidth="1.5" />
+        <line x1="35" y1="28" x2="33" y2="35" stroke="#90A4AE" strokeWidth="1.5" />
+      </g>
+    </svg>
+  );
+}
+
+export function SmilingHeartIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 56 C14 44 8 32 14 22 C19 13 29 14 32 20 C35 14 45 13 50 22 C56 32 50 44 32 56 Z" fill="#FF5A79" stroke="#D81B60" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="25" cy="30" r="2.2" fill="#4A0011" />
+      <circle cx="39" cy="30" r="2.2" fill="#4A0011" />
+      <path d="M27 38 Q32 43.5 37 38" fill="none" stroke="#4A0011" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="21" cy="35" r="2.2" fill="#FF8A9C" />
+      <circle cx="43" cy="35" r="2.2" fill="#FF8A9C" />
+    </svg>
+  );
+}
+
+export function ClockFaceIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M20 12 C20 5 28 5 28 12" fill="#FFD54F" stroke="#F9A825" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M36 12 C36 5 44 5 44 12" fill="#FFD54F" stroke="#F9A825" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="9" r="2" fill="#F9A825" />
+      <circle cx="40" cy="9" r="2" fill="#F9A825" />
+      <circle cx="32" cy="33" r="23" fill="#81D4FA" stroke="#0288D1" strokeWidth="3" />
+      <line x1="32" y1="33" x2="32" y2="21" stroke="#0288D1" strokeWidth="3" strokeLinecap="round" />
+      <line x1="32" y1="33" x2="42" y2="37" stroke="#0288D1" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="32" cy="33" r="2.5" fill="#0288D1" />
+      <circle cx="26" cy="39" r="1.6" fill="#01579B" />
+      <circle cx="38" cy="39" r="1.6" fill="#01579B" />
+      <path d="M28 43 Q32 45.5 36 43" fill="none" stroke="#01579B" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function TargetIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <line x1="42" y1="32" x2="42" y2="14" stroke="#8D6E63" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M42 14 L54 18 L42 22 Z" fill="#66BB6A" stroke="#388E3C" strokeWidth="1.5" strokeLinejoin="round" />
+      <circle cx="32" cy="40" r="18" fill="#EF5350" stroke="#C62828" strokeWidth="2" />
+      <circle cx="32" cy="40" r="12" fill="#FFFFFF" stroke="#C62828" strokeWidth="2" />
+      <circle cx="32" cy="40" r="6" fill="#42A5F5" stroke="#1565C0" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function OpenBookIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 17 C26 13 16 13 10 15 L10 45 C16 43 26 43 32 47 Z" fill="#E3F2FD" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M32 17 C38 13 48 13 54 15 L54 45 C48 43 38 43 32 47 Z" fill="#E3F2FD" stroke="#1E88E5" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M32 17 L32 47" stroke="#1E88E5" strokeWidth="1.5" />
+      <line x1="16" y1="22" x2="27" y2="22" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="16" y1="28" x2="28" y2="28" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="16" y1="34" x2="26" y2="34" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="37" y1="22" x2="48" y2="22" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="36" y1="28" x2="48" y2="28" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="38" y1="34" x2="48" y2="34" stroke="#90CAF9" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function HourglassIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <line x1="18" y1="12" x2="46" y2="12" stroke="#8D6E63" strokeWidth="3" strokeLinecap="round" />
+      <line x1="18" y1="52" x2="46" y2="52" stroke="#8D6E63" strokeWidth="3" strokeLinecap="round" />
+      <path d="M22 14 L42 14 L34 32 L42 50 L22 50 L30 32 Z" fill="#FFE0B2" stroke="#F9A825" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M23 16 L41 16 L34 30 L30 30 Z" fill="#FFB74D" />
+      <path d="M34 34 L30 34 L24 48 L40 48 Z" fill="#FFB74D" />
+      <line x1="32" y1="30" x2="32" y2="36" stroke="#FFB74D" strokeWidth="1.5" />
+      <circle cx="24" cy="13" r="1.8" fill="#8D6E63" />
+      <circle cx="40" cy="13" r="1.8" fill="#8D6E63" />
+      <circle cx="24" cy="51" r="1.8" fill="#8D6E63" />
+      <circle cx="40" cy="51" r="1.8" fill="#8D6E63" />
+    </svg>
+  );
+}
+
+export function StopHandIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <rect x="17" y="30" width="7" height="17" rx="3.5" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <rect x="24" y="26" width="25" height="25" rx="9" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <rect x="24" y="11" width="5" height="17" rx="2.5" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <rect x="31" y="9" width="5" height="19" rx="2.5" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <rect x="38" y="11" width="5" height="17" rx="2.5" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <rect x="45" y="14" width="5" height="14" rx="2.5" fill="#FFCCBC" stroke="#8D6E63" strokeWidth="2" />
+      <circle cx="37" cy="42" r="8" fill="#E53935" stroke="#B71C1C" strokeWidth="2" />
+      <text x="37" y="46.5" textAnchor="middle" fontSize="10" fontWeight="900" fill="white" fontFamily="Arial, sans-serif">!</text>
+    </svg>
+  );
+}
