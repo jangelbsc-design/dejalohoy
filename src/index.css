@@ -92,8 +92,8 @@ body {
 }
 
 .dash-card {
-  background: var(--surface);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  backdrop-filter: none;
   border-radius: 16px;
   padding: 16px 12px;
   display: flex;
@@ -101,17 +101,17 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--card-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: none;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  transition: transform 0.2s ease, border-color 0.2s ease;
   aspect-ratio: 1;
   text-align: center;
 }
 
 .dash-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dash-card-clickable {
@@ -121,7 +121,7 @@ body {
 .dash-label {
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.85);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1.2;
@@ -135,8 +135,9 @@ body {
 .dash-value {
   font-size: 13px;
   font-weight: 800;
-  color: var(--text);
+  color: white;
   line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Action Buttons */
