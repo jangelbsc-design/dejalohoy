@@ -964,3 +964,166 @@ body {
   text-align: center;
   font-style: italic;
 }
+
+.health-share-btn {
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.health-share-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+.health-share-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.health-share-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.health-share-error {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e53935;
+  text-align: center;
+}
+
+.health-share-card {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  width: 340px;
+  height: 440px;
+  background: linear-gradient(160deg, #667eea 0%, #764ba2 100%);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+.health-share-card-header {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.health-share-brand {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+.health-share-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.health-share-icon-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+}
+
+.health-share-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.health-share-title {
+  color: white;
+  font-size: 26px;
+  font-weight: 900;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.health-share-time-value {
+  display: block;
+  color: white;
+  font-size: 30px;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.health-share-time-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.health-share-bar {
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  height: 10px;
+}
+
+.health-share-bar .health-bar-fill {
+  background: white;
+}
+
+.health-share-date {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.health-share-card-footer {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.health-share-preview-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.health-share-preview {
+  width: 220px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}

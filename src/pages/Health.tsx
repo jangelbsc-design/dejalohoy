@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { differenceInMinutes } from 'date-fns';
-import { ArrowLeft, X, CheckCircle2, Circle } from 'lucide-react';
+import { ArrowLeft, X, CheckCircle2, Circle, Share2, Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import { SmilingHeartIcon, LungsIcon, DropletIcon, TasteFaceIcon, BreathingIcon, HeartbeatIcon, CleanLungsIcon, ShieldHeartIcon } from '../components/CartoonIcons';
 
 interface HealthMilestone {
@@ -105,6 +106,10 @@ export default function Health() {
   const profile = useStore((state) => state.profile);
   const [minutesFree, setMinutesFree] = useState(0);
   const [selected, setSelected] = useState<HealthMilestone | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const [sharePreview, setSharePreview] = useState<string | null>(null);
+  const [shareError, setShareError] = useState<string | null>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!profile?.startDate) return;
@@ -121,6 +126,74 @@ export default function Health() {
 
   const selectedProgress = selected ? Math.min((minutesFree / selected.timeReq) * 100, 100) : 0;
   const selectedComplete = selected ? minutesFree >= selected.timeReq : false;
+
+  const handleShare = async () => {
+    if (!selected || sharing) return;
+    setSharing(true);
+    setShareError(null);
+
+    try {
+      await new Promise((r) => setTimeout(r, 100));
+
+      if (!shareCardRef.current) throw new Error('share-card-missing');
+
+      const canvas = await html2canvas(shareCardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#667eea',
+      });
+
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('blob-failed');
+
+      const fileName = `logro-${selected.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
+      const file = new File([blob], fileName, { type: 'image/png' });
+
+      const nav = navigator as Navigator & {
+        canShare?: (data: { files?: File[] }) => boolean;
+        share?: (data: { files?: File[]; title?: string; text?: string }) => Promise<void>;
+      };
+
+      if (nav.share && nav.canShare && nav.canShare({ files: [file] })) {
+        await nav.share({
+          files: [file],
+          title: 'Déjalo Hoy - Logro alcanzado',
+          text: `¡Alcancé el logro "${selected.title}" sin fumar! 🌱`,
+        });
+      } else {
+        const previewUrl = URL.createObjectURL(blob);
+        setSharePreview(previewUrl);
+      }
+    } catch (err) {
+      if (err && (err as Error).name === 'AbortError') {
+        setShareError('Compartir cancelado');
+      } else {
+        setShareError('No se pudo generar la imagen. Intentá de nuevo.');
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const downloadShareImage = () => {
+    if (!sharePreview) return;
+    const a = document.createElement('a');
+    a.href = sharePreview;
+    a.download = 'logro-dejalo-hoy.png';
+    a.click();
+  };
+
+  const closeSharePreview = () => {
+    if (sharePreview) URL.revokeObjectURL(sharePreview);
+    setSharePreview(null);
+    setShareError(null);
+  };
+
+  const shareDate = new Date().toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
     <div className="health-page">
@@ -203,6 +276,65 @@ export default function Health() {
 
             <p className="modal-body" style={{ marginTop: '16px' }}>{selected.description}</p>
             <p className="health-modal-source">Fuente: {selected.source}</p>
+
+            <button className="health-share-btn" onClick={handleShare} disabled={sharing}>
+              {sharing ? <Share2 size={18} className="health-share-spin" /> : <Share2 size={18} />}
+              {sharing ? 'Generando imagen...' : 'Compartir este logro'}
+            </button>
+            {shareError && <p className="health-share-error">{shareError}</p>}
+          </div>
+        </div>
+      )}
+
+      {selected && (
+        <div
+          ref={shareCardRef}
+          className="health-share-card"
+          aria-hidden="true"
+        >
+          <div className="health-share-card-header">
+            <span className="health-share-brand">Déjalo Hoy 🌱</span>
+          </div>
+          <div className="health-share-card-body">
+            <div className="health-share-icon-circle">
+              <selected.icon size={64} />
+            </div>
+            <span className="health-share-label">¡LOGRO ALCANZADO!</span>
+            <h3 className="health-share-title">{selected.title}</h3>
+            <div className="health-share-time">
+              <span className="health-share-time-value">{formatElapsed(minutesFree)}</span>
+              <span className="health-share-time-label">sin fumar</span>
+            </div>
+            <div className="health-bar-track health-share-bar">
+              <div
+                className={`health-bar-fill ${selectedComplete ? 'health-bar-complete' : ''}`}
+                style={{ width: `${selectedProgress}%` }}
+              />
+            </div>
+            <span className="health-share-date">{shareDate}</span>
+          </div>
+          <div className="health-share-card-footer">Hecho con Déjalo Hoy</div>
+        </div>
+      )}
+
+      {sharePreview && (
+        <div className="modal-overlay" onClick={closeSharePreview}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeSharePreview}>
+              <X size={20} />
+            </button>
+            <h2 className="modal-title" style={{ textAlign: 'center' }}>Tu logro en imagen</h2>
+            <p className="modal-body" style={{ textAlign: 'center', marginBottom: '12px' }}>
+              Tu dispositivo no permite compartir imágenes directamente. Descargá la tarjeta y
+              compartila desde la app que prefieras.
+            </p>
+            <div className="health-share-preview-wrap">
+              <img src={sharePreview} alt="Tarjeta del logro" className="health-share-preview" />
+            </div>
+            <button className="health-share-btn" onClick={downloadShareImage}>
+              <Download size={18} />
+              Descargar imagen
+            </button>
           </div>
         </div>
       )}
