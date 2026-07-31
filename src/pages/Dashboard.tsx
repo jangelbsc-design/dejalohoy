@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { DollarSign, CigaretteOff, Heart, Clock, Target, BookOpen, Hourglass, Hand, AlertTriangle, MessageCircle, Frown, X } from 'lucide-react';
 import { 
@@ -12,6 +13,7 @@ import {
 } from '../core/utils/calculations';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const profile = useStore((state) => state.profile);
   const resetProfile = useStore((state) => state.resetProfile);
   const [showAssistant, setShowAssistant] = useState(false);
@@ -62,7 +64,7 @@ export default function Dashboard() {
       <p className="dash-subtitle">Cada segundo sin fumar es una victoria</p>
 
       <div className="dash-grid">
-        <div className="dash-card">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/wishlist')}>
           <span className="dash-label">Dinero Ahorrado</span>
           <DollarSign size={36} className="dash-icon" />
           <span className="dash-value">Bs {safeNumber(money).toFixed(2)}</span>

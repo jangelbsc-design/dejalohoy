@@ -5,6 +5,7 @@ import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Health from './pages/Health';
 import Badges from './pages/Badges';
+import Wishlist from './pages/Wishlist';
 
 function Layout() {
   const profile = useStore((state) => state.profile);
@@ -24,6 +25,7 @@ function Layout() {
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Dashboard />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/health" element={<Health />} />
           <Route path="/badges" element={<Badges />} />
         </Routes>
