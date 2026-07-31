@@ -213,6 +213,37 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.btn-share-link {
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+  color: #14532d;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 20px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.btn-share-link:active {
+  transform: scale(0.98);
+}
+
+.dash-link-hint {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
-import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2 } from 'lucide-react';
+import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2, Link2 } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, HourglassIcon, StopHandIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [showDiary, setShowDiary] = useState(false);
   const [showNoFumes, setShowNoFumes] = useState(false);
   const [diaryEntry, setDiaryEntry] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
   const diaryEntries = useDiaryStore((state) => state.entries);
   const addDiaryEntry = useDiaryStore((state) => state.addEntry);
   const removeDiaryEntry = useDiaryStore((state) => state.removeEntry);
@@ -76,6 +77,33 @@ export default function Dashboard() {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const buildShareLink = (): string => {
+    const base = `${window.location.origin}${window.location.pathname}`;
+    const params = new URLSearchParams();
+    if (profile?.startDate) params.set('start', profile.startDate);
+    params.set('cigsPerDay', String(safeNumber(profile?.cigsPerDay)));
+    params.set('cigsPerPack', String(safeNumber(profile?.cigsPerPack)));
+    params.set('pricePerPack', String(safeNumber(profile?.pricePerPack)));
+    params.set('yearsSmoking', String(safeNumber(profile?.yearsSmoking)));
+    return `${base}#/?${params.toString()}`;
+  };
+
+  const handleShareLink = async () => {
+    const link = buildShareLink();
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      const fallback = document.createElement('textarea');
+      fallback.value = link;
+      document.body.appendChild(fallback);
+      fallback.select();
+      document.execCommand('copy');
+      document.body.removeChild(fallback);
+    }
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2500);
   };
 
   const safeNumber = (val: number | undefined | null): number => val ?? 0;
@@ -151,7 +179,18 @@ export default function Dashboard() {
           <MessageCircle size={24} />
           Asistente de Caída
         </button>
+
+        <button className="btn-share-link" onClick={handleShareLink}>
+          <Link2 size={24} />
+          {linkCopied ? '¡Enlace copiado!' : 'Compartir mi enlace'}
+        </button>
       </div>
+
+      {linkCopied && (
+        <p className="dash-link-hint">
+          Abrí este enlace en tu teléfono y verás tu progreso sin volver a pedir datos.
+        </p>
+      )}
 
       {/* Modal Asistente de Caída */}
       {showAssistant && (
