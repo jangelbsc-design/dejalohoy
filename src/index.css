@@ -53,6 +53,18 @@ body {
   flex-direction: column;
 }
 
+@media (min-width: 768px) {
+  #root {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1200px) {
+  #root {
+    max-width: 860px;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
@@ -1526,46 +1538,53 @@ body {
 
 .ach-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 10px;
+  justify-items: center;
+  align-items: start;
 }
 
-.ach-card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
-  padding: 14px 8px;
+@media (min-width: 600px) {
+  .ach-grid {
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 20px 12px;
+  }
+}
+
+.ach-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  box-shadow: var(--card-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  aspect-ratio: 1;
-  text-align: center;
+  gap: 4px;
   position: relative;
-  filter: grayscale(0.9);
-  opacity: 0.6;
+  filter: grayscale(1);
+  opacity: 0.35;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  text-align: center;
 }
 
-.ach-card-unlocked {
+.ach-item-unlocked {
   filter: none;
   opacity: 1;
 }
 
-.ach-card-current {
-  border: 2px solid var(--warning);
-  box-shadow: 0 4px 20px rgba(255, 183, 3, 0.35);
+.ach-item-current {
+  filter: drop-shadow(0 0 8px rgba(255, 183, 3, 0.6));
+  opacity: 1;
 }
 
-.ach-card-check {
+.ach-item-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: -8px;
+  right: -6px;
+  background: white;
+  border-radius: 50%;
+  padding: 1px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  line-height: 0;
 }
 
-.ach-card-symbols {
+.ach-item-symbols {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1573,10 +1592,11 @@ body {
   gap: 0;
 }
 
-.ach-card-time {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-secondary);
+.ach-item-time {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  line-height: 1.2;
 }

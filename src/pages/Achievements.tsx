@@ -153,17 +153,17 @@ export default function Achievements() {
           return (
             <div
               key={a.id}
-              className={`ach-card ${unlocked ? 'ach-card-unlocked' : ''} ${
-                isCurrent ? 'ach-card-current' : ''
+              className={`ach-item ${unlocked ? 'ach-item-unlocked' : ''} ${
+                isCurrent ? 'ach-item-current' : ''
               }`}
             >
-              {unlocked && (
-                <div className="ach-card-check">
-                  <CheckCircle2 size={16} color="#4CAF50" />
-                </div>
+              {isCurrent && (
+                <span className="ach-item-badge">
+                  <CheckCircle2 size={14} color="#4CAF50" />
+                </span>
               )}
-              <div className="ach-card-symbols">{renderSymbol(a, 26)}</div>
-              <span className="ach-card-time">{formatTime(a.hours)}</span>
+              <div className="ach-item-symbols">{renderSymbol(a, 22)}</div>
+              <span className="ach-item-time">{formatTime(a.hours)}</span>
             </div>
           );
         })}
