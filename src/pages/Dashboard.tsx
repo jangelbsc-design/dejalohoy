@@ -30,6 +30,8 @@ export default function Dashboard() {
   const setMotivationPhoto = useMotivationStore((state) => state.setPhoto);
   const motivationText = useMotivationStore((state) => state.text);
   const setMotivationText = useMotivationStore((state) => state.setText);
+  const photoPos = useMotivationStore((state) => state.photoPos);
+  const setPhotoPos = useMotivationStore((state) => state.setPhotoPos);
 
   const [time, setTime] = useState<FreeTime>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [money, setMoney] = useState(0);
@@ -313,7 +315,12 @@ export default function Dashboard() {
 
               {motivationPhoto ? (
                 <div className="motivation-photo-wrap">
-                  <img src={motivationPhoto} alt="Tu motivación" className="motivation-photo" />
+                  <img 
+                    src={motivationPhoto} 
+                    alt="Tu motivación" 
+                    className="motivation-photo" 
+                    style={{ objectPosition: `50% ${photoPos}%` }}
+                  />
                   <button
                     className="motivation-photo-remove"
                     onClick={() => setMotivationPhoto(null)}
@@ -321,6 +328,14 @@ export default function Dashboard() {
                   >
                     <XCircle size={22} />
                   </button>
+                  <label className="photo-adjust-label">Ajustar encuadre</label>
+                  <input 
+                    type="range" 
+                    className="photo-adjust-slider" 
+                    min="0" max="100" 
+                    value={photoPos} 
+                    onChange={(e) => setPhotoPos(Number(e.target.value))} 
+                  />
                 </div>
               ) : (
                 <label className="motivation-upload">

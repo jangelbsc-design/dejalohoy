@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --primary: #00ACC1;
   --primary-dark: #00838F;
   --background-start: #00BCD4;
@@ -161,7 +161,7 @@ html {
 .counter-hero-units {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 14px;
 }
 
 .counter-unit {
@@ -179,10 +179,13 @@ html {
 }
 
 .counter-unit-number {
-  font-size: clamp(18px, 7vw, 24px);
+  font-size: clamp(16px, 6.5vw, 22px);
   font-weight: 900;
-  color: #14532d;
-  line-height: 1;
+  background: linear-gradient(135deg, #2196F3, #E91E63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+  letter-spacing: 1.5px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -376,6 +379,27 @@ html {
   font-weight: 600;
   text-align: center;
   line-height: 1.4;
+}
+
+.motivation-photo-remove:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.05);
+}
+
+.photo-adjust-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.photo-adjust-slider {
+  width: 100%;
+  margin-bottom: 8px;
+  accent-color: var(--primary);
 }
 
 .btn-logout {
