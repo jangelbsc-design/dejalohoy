@@ -4,13 +4,15 @@ import { differenceInMinutes } from 'date-fns';
 import { CheckCircle2, Circle } from 'lucide-react';
 
 const MILESTONES = [
-  { id: 1, timeReq: 20, title: 'Presión Arterial', desc: 'Tu presión arterial y ritmo cardíaco vuelven a la normalidad.' },
-  { id: 2, timeReq: 480, title: 'Oxigenación (8h)', desc: 'Los niveles de oxígeno en tu sangre se normalizan.' },
-  { id: 3, timeReq: 720, title: 'Monóxido de Carbono (12h)', desc: 'El monóxido de carbono cae a niveles normales.' },
-  { id: 4, timeReq: 2880, title: 'Gusto y Olfato (48h)', desc: 'Las terminaciones nerviosas comienzan a regenerarse.' },
-  { id: 5, timeReq: 4320, title: 'Respiración (72h)', desc: 'Los bronquios se relajan, es más fácil respirar.' },
-  { id: 6, timeReq: 20160, title: 'Pulmones (2 sem)', desc: 'Mejora notable en la circulación y función pulmonar.' },
-  { id: 7, timeReq: 525600, title: 'Corazón (1 año)', desc: 'El riesgo de enfermedad coronaria es la mitad del de un fumador.' },
+  { id: 1, timeReq: 20, title: 'Presión Arterial', desc: 'Tu ritmo cardíaco y presión arterial vuelven a niveles normales. — American Cancer Society' },
+  { id: 2, timeReq: 720, title: 'Monóxido de Carbono (12h)', desc: 'El nivel de CO en sangre baja a lo normal y el oxígeno aumenta. — Cleveland Clinic' },
+  { id: 3, timeReq: 1440, title: 'Nicotina Eliminada (24h)', desc: 'La nicotina se elimina completamente de tu cuerpo. — CDC' },
+  { id: 4, timeReq: 2880, title: 'Gusto y Olfato (48h)', desc: 'Las terminaciones nerviosas se regeneran. Mejoran el gusto y el olfato.' },
+  { id: 5, timeReq: 4320, title: 'Respiración (72h)', desc: 'Los bronquios se relajan. Respirar se vuelve más fácil y aumenta tu energía. — Medical News Today' },
+  { id: 6, timeReq: 20160, title: 'Circulación (2 sem)', desc: 'La circulación y función pulmonar mejoran hasta un 30%. — Cleveland Clinic' },
+  { id: 7, timeReq: 43200, title: 'Cilias Pulmonares (1 mes)', desc: 'Las cilias se regeneran, limpiando los pulmones. Menos tos y riesgo de infecciones. — SolutionHealth' },
+  { id: 8, timeReq: 525600, title: 'Corazón (1 año)', desc: 'El riesgo de enfermedad coronaria se reduce a la mitad. — American Cancer Society' },
+  { id: 9, timeReq: 2629800, title: 'ACV (5 años)', desc: 'El riesgo de accidente cerebrovascular iguala al de un no fumador. — UnitedHealthcare' },
 ];
 
 export default function Health() {
