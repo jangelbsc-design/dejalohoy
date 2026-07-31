@@ -120,3 +120,79 @@ export function StopHandIcon({ size = 36 }: IconProps) {
     </svg>
   );
 }
+
+export function LungsIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <rect x="30" y="12" width="4" height="12" rx="2" fill="#EF9A9A" stroke="#C62828" strokeWidth="1.5" />
+      <path d="M20 18 C8 18 8 40 12 47 C16 54 25 51 27 42 C29 35 27 25 24 20 C23 18 21 18 20 18 Z" fill="#FF8A80" stroke="#C62828" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M44 18 C56 18 56 40 52 47 C48 54 39 51 37 42 C35 35 37 25 40 20 C41 18 43 18 44 18 Z" fill="#FF8A80" stroke="#C62828" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function DropletIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 6 C32 6 13 30 13 42 C13 53 21 58 32 58 C43 58 51 53 51 42 C51 30 32 6 32 6 Z" fill="#4FC3F7" stroke="#0288D1" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="26" cy="36" r="2.2" fill="#01579B" />
+      <circle cx="38" cy="36" r="2.2" fill="#01579B" />
+      <path d="M27 44 Q32 48 37 44" fill="none" stroke="#01579B" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function TasteFaceIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <circle cx="32" cy="30" r="22" fill="#FFE082" stroke="#F9A825" strokeWidth="2.5" />
+      <circle cx="25" cy="27" r="2.5" fill="#8D6E63" />
+      <circle cx="39" cy="27" r="2.5" fill="#8D6E63" />
+      <path d="M24 37 Q32 43 40 37" fill="none" stroke="#8D6E63" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M30 41 C35 40 37 46 32 48 C27 50 25 43 30 41 Z" fill="#EF5350" stroke="#C62828" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function BreathingIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <circle cx="32" cy="32" r="22" fill="#81D4FA" stroke="#0288D1" strokeWidth="2.5" />
+      <path d="M15 26 Q10 28 15 30 Q20 32 15 34" fill="none" stroke="#01579B" strokeWidth="2" strokeLinecap="round" />
+      <path d="M49 26 Q54 28 49 30 Q44 32 49 34" fill="none" stroke="#01579B" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="26" cy="36" r="2" fill="#01579B" />
+      <circle cx="38" cy="36" r="2" fill="#01579B" />
+      <path d="M27 42 Q32 45.5 37 42" fill="none" stroke="#01579B" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function HeartbeatIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 54 C14 42 8 30 14 20 C19 11 29 12 32 18 C35 12 45 11 50 20 C56 30 50 42 32 54 Z" fill="#FF8A80" stroke="#E53935" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M15 34 L24 34 L27 29 L31 39 L34 28 L37 34 L49 34" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function CleanLungsIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <rect x="30" y="12" width="4" height="10" rx="2" fill="#C8E6C9" stroke="#388E3C" strokeWidth="1.5" />
+      <path d="M20 20 C8 20 8 40 12 47 C16 53 25 50 27 42 C29 35 27 26 24 21 C23 20 21 20 20 20 Z" fill="#A5D6A7" stroke="#388E3C" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M44 20 C56 20 56 40 52 47 C48 53 39 50 37 42 C35 35 37 26 40 21 C41 20 43 20 44 20 Z" fill="#A5D6A7" stroke="#388E3C" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M19 8 L20.5 12 L24.5 13.5 L20.5 15 L19 19 L17.5 15 L13.5 13.5 L17.5 12 Z" fill="#FFD54F" />
+      <path d="M48 10 L49 13 L52 14 L49 15 L48 18 L47 15 L44 14 L47 13 Z" fill="#FFD54F" />
+    </svg>
+  );
+}
+
+export function ShieldHeartIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 4 C32 4 14 12 14 30 C14 48 32 60 32 60 C32 60 50 48 50 30 C50 12 32 4 32 4 Z" fill="#81D4FA" stroke="#0288D1" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M32 50 C20 41 16 32 20 25 C24 19 30 19 32 23 C34 19 40 19 44 25 C48 32 44 41 32 50 Z" fill="#FF5A79" stroke="#C2185B" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}

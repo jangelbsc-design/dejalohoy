@@ -77,7 +77,7 @@ export default function Dashboard() {
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
-        <div className="dash-card">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/health')}>
           <span className="dash-label">Salud Ganada</span>
           <SmilingHeartIcon size={40} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>

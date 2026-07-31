@@ -769,3 +769,198 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* Health Page */
+.health-page {
+  padding: 24px 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.health-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.health-back {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.health-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.health-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  flex: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.health-time-badge {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.health-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 12px 0 24px;
+  line-height: 1.4;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.health-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  aspect-ratio: 1;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font-family);
+}
+
+.health-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+}
+
+.health-card-complete {
+  border: 2px solid rgba(76, 175, 80, 0.5);
+}
+
+.health-card-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.health-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.health-card-time {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.health-bar-track {
+  height: 6px;
+  width: 100%;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.health-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.health-bar-complete {
+  background: var(--success);
+}
+
+.health-card-percent {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+/* Health modal */
+.health-modal-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.health-modal-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.health-modal-stat {
+  flex: 1;
+  background: rgba(102, 126, 234, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.health-modal-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.health-modal-stat-value {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.health-modal-progress-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.health-modal-source {
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
