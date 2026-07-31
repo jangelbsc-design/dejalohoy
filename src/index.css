@@ -653,3 +653,119 @@ body {
 .goal-add-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
+
+/* Medals Page */
+.medals-page {
+  padding: 24px 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.medals-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.medals-back {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.medals-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.medals-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  flex: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.medals-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #FFD700;
+  font-size: 15px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.medals-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin: 12px 0 24px;
+  line-height: 1.4;
+}
+
+.medals-subtitle strong {
+  color: #FFD700;
+  font-weight: 800;
+}
+
+.medals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.medal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.medal svg {
+  transition: filter 0.3s ease;
+}
+
+.medal-gold {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.medal-gold svg {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
+}
+
+.medal-number {
+  font-size: 15px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.medal-number-gold {
+  color: #FFD700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.medal-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

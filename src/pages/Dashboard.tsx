@@ -71,7 +71,7 @@ export default function Dashboard() {
           <span className="dash-value">Bs {safeNumber(money).toFixed(2)}</span>
         </div>
 
-        <div className="dash-card">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/medals')}>
           <span className="dash-label">Cigarros No Fumados</span>
           <BrokenCigaretteIcon size={40} />
           <span className="dash-value">{safeNumber(cigs)}</span>
