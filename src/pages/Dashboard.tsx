@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
@@ -99,7 +99,7 @@ export default function Dashboard() {
         setMotivationPhoto(canvas.toDataURL('image/jpeg', 0.7));
       };
       img.onerror = () => {
-        alert('No se pudo leer la imagen. ProbÃ¡ con otra foto.');
+        alert('No se pudo leer la imagen. Probá con otra foto.');
       };
       img.src = reader.result as string;
     };
@@ -112,11 +112,11 @@ export default function Dashboard() {
   const months = Math.floor((time.days % 365) / 30);
 
   const mainTitle = years >= 1
-    ? `${years} ${years === 1 ? 'aÃ±o' : 'aÃ±os'}${months > 0 ? ` ${months} ${months === 1 ? 'mes' : 'meses'}` : ''}`
+    ? `${years} ${years === 1 ? 'año' : 'años'}${months > 0 ? ` ${months} ${months === 1 ? 'mes' : 'meses'}` : ''}`
     : months >= 1
       ? `${months} ${months === 1 ? 'mes' : 'meses'}`
       : time.days >= 1
-        ? `${time.days} ${time.days === 1 ? 'dÃ­a' : 'dÃ­as'}`
+        ? `${time.days} ${time.days === 1 ? 'día' : 'días'}`
         : time.hours >= 1
           ? `${time.hours} ${time.hours === 1 ? 'hora' : 'horas'}`
           : `${time.minutes} ${time.minutes === 1 ? 'minuto' : 'minutos'}`;
@@ -139,7 +139,7 @@ export default function Dashboard() {
         <div className="counter-hero-units">
           <div className="counter-unit">
             <span className="counter-unit-number">{time.days}</span>
-            <span className="counter-unit-label">DÃ­as</span>
+            <span className="counter-unit-label">Días</span>
           </div>
           <div className="counter-unit">
             <span className="counter-unit-number">{pad(time.hours)}</span>
@@ -158,7 +158,7 @@ export default function Dashboard() {
 
       <div className="dash-grid">
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/guide')}>
-          <span className="dash-label">GuÃ­a Asistida</span>
+          <span className="dash-label">Guía Asistida</span>
           <BrainIcon size={48} />
           <span className="dash-value">Ver ahora</span>
         </div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
               <X size={20} />
             </button>
             <h2 className="modal-title">Mi Diario</h2>
-            <p className="modal-body">Escribe cÃ³mo te sientes en este momento y guarda tu registro. Desahogarte ayuda a liberar la ansiedad.</p>
+            <p className="modal-body">Escribe cómo te sientes en este momento y guarda tu registro. Desahogarte ayuda a liberar la ansiedad.</p>
             <textarea
               className="diary-textarea"
               placeholder="Hoy me siento..."
@@ -248,7 +248,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <p className="modal-quote" style={{ marginTop: '16px' }}>
-                AÃºn no tienes registros. Guarda el primero y empieza a desahogarte. âœ¨
+                Aún no tienes registros. Guarda el primero y empieza a desahogarte. ✨
               </p>
             )}
           </div>
@@ -265,21 +265,21 @@ export default function Dashboard() {
             <h2 className="modal-title">No lo hagas</h2>
             <p className="modal-body">Antes de fumarlo, lee esto:</p>
             <ul className="modal-list">
-              <li><strong>Â¿Realmente lo necesitas?</strong> El craving es solo una seÃ±al de tu cerebro acostumbrado a la nicotina. Pasa en minutos. No le des poder.</li>
-              <li><strong>Â¿QuÃ© vas a perder?</strong> Cada cigarro reinicia tu progreso. El tiempo, el dinero, la salud y el orgullo de haberlo logrado.</li>
-              <li><strong>Â¿QuÃ© pasarÃ¡ despuÃ©s?</strong> La culpa y la frustraciÃ³n serÃ¡n peores que el alivio de 3 minutos. No vale la pena.</li>
-              <li><strong>Haz esto primero:</strong> Bebe agua. Respira 4-7-8. Camina 5 minutos. Si despuÃ©s de eso aÃºn quieres fumarlo, vuelve a leer esto.</li>
-              <li><strong>Mereces estar libre.</strong> Tomaste la mejor decisiÃ³n de tu vida. No dejes que un momento de debilidad la arruine.</li>
+              <li><strong>¿Realmente lo necesitas?</strong> El craving es solo una señal de tu cerebro acostumbrado a la nicotina. Pasa en minutos. No le des poder.</li>
+              <li><strong>¿Qué vas a perder?</strong> Cada cigarro reinicia tu progreso. El tiempo, el dinero, la salud y el orgullo de haberlo logrado.</li>
+              <li><strong>¿Qué pasará después?</strong> La culpa y la frustración serán peores que el alivio de 3 minutos. No vale la pena.</li>
+              <li><strong>Haz esto primero:</strong> Bebe agua. Respira 4-7-8. Camina 5 minutos. Si después de eso aún quieres fumarlo, vuelve a leer esto.</li>
+              <li><strong>Mereces estar libre.</strong> Tomaste la mejor decisión de tu vida. No dejes que un momento de debilidad la arruine.</li>
             </ul>
 
             <div className="motivation-section">
-              <h3 className="motivation-title">Tu porquÃ©</h3>
+              <h3 className="motivation-title">Tu porqué</h3>
 
               {motivationPhoto ? (
                 <div className="motivation-photo-wrap">
                   <img 
                     src={motivationPhoto} 
-                    alt="Tu motivaciÃ³n" 
+                    alt="Tu motivación" 
                     className="motivation-photo" 
                     style={{ objectPosition: `50% ${photoPos}%` }}
                   />
@@ -315,7 +315,7 @@ export default function Dashboard() {
 
               <textarea
                 className="diary-textarea motivation-textarea"
-                placeholder="Escribe aquÃ­ por quÃ© estÃ¡s dejando de fumar (tu familia, tu salud, tus sueÃ±os)..."
+                placeholder="Escribe aquí por qué estás dejando de fumar (tu familia, tu salud, tus sueños)..."
                 value={motivationText}
                 onChange={(e) => setMotivationText(e.target.value)}
                 rows={3}
@@ -330,7 +330,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <p className="modal-quote">"Un antojo es solo un pensamiento. TÃº eres mÃ¡s grande que tus pensamientos."</p>
+            <p className="modal-quote">"Un antojo es solo un pensamiento. Tú eres más grande que tus pensamientos."</p>
           </div>
         </div>
       )}
