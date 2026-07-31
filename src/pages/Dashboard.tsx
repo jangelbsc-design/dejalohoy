@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
-import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2, Link2 } from 'lucide-react';
+import { useMotivationStore } from '../store/motivationStore';
+import { AlertTriangle, MessageCircle, Frown, X, Save, Trash2, Link2, Camera, XCircle, Heart } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, HourglassIcon, StopHandIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -27,6 +28,10 @@ export default function Dashboard() {
   const diaryEntries = useDiaryStore((state) => state.entries);
   const addDiaryEntry = useDiaryStore((state) => state.addEntry);
   const removeDiaryEntry = useDiaryStore((state) => state.removeEntry);
+  const motivationPhoto = useMotivationStore((state) => state.photo);
+  const setMotivationPhoto = useMotivationStore((state) => state.setPhoto);
+  const motivationText = useMotivationStore((state) => state.text);
+  const setMotivationText = useMotivationStore((state) => state.setText);
 
   const [time, setTime] = useState<FreeTime>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [money, setMoney] = useState(0);
@@ -104,6 +109,33 @@ export default function Dashboard() {
     }
     setLinkCopied(true);
     setTimeout(() => setLinkCopied(false), 2500);
+  };
+
+  const handlePhotoUpload = (file: File | undefined | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxSize = 800;
+        let width = img.width;
+        let height = img.height;
+        if (width > maxSize || height > maxSize) {
+          const ratio = Math.min(maxSize / width, maxSize / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, width, height);
+        setMotivationPhoto(canvas.toDataURL('image/jpeg', 0.75));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   };
 
   const safeNumber = (val: number | undefined | null): number => val ?? 0;
@@ -301,6 +333,51 @@ export default function Dashboard() {
               <li><strong>Haz esto primero:</strong> Bebe agua. Respira 4-7-8. Camina 5 minutos. Si después de eso aún quieres fumarlo, vuelve a leer esto.</li>
               <li><strong>Mereces estar libre.</strong> Tomaste la mejor decisión de tu vida. No dejes que un momento de debilidad la arruine.</li>
             </ul>
+
+            <div className="motivation-section">
+              <h3 className="motivation-title">Tu porqué</h3>
+
+              {motivationPhoto ? (
+                <div className="motivation-photo-wrap">
+                  <img src={motivationPhoto} alt="Tu motivación" className="motivation-photo" />
+                  <button
+                    className="motivation-photo-remove"
+                    onClick={() => setMotivationPhoto(null)}
+                    aria-label="Quitar foto"
+                  >
+                    <XCircle size={22} />
+                  </button>
+                </div>
+              ) : (
+                <label className="motivation-upload">
+                  <Camera size={22} />
+                  <span>Sube una foto que te motive</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoUpload(e.target.files?.[0])}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+              )}
+
+              <textarea
+                className="diary-textarea motivation-textarea"
+                placeholder="Escribe aquí por qué estás dejando de fumar (tu familia, tu salud, tus sueños)..."
+                value={motivationText}
+                onChange={(e) => setMotivationText(e.target.value)}
+                rows={3}
+              />
+              <button
+                className="motivation-save"
+                onClick={() => setMotivationText(motivationText)}
+                disabled={!motivationText.trim()}
+              >
+                <Heart size={16} />
+                Guardar mi motivo
+              </button>
+            </div>
+
             <p className="modal-quote">"Un antojo es solo un pensamiento. Tú eres más grande que tus pensamientos."</p>
           </div>
         </div>
