@@ -1,5 +1,37 @@
 interface IconProps {
   size?: number;
+  color?: string;
+}
+
+export function StarIcon({ size = 36, color = '#FFB703' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M32 4 L40.5 22 L60 24.5 L45.5 38.5 L50 58 L32 48 L14 58 L18.5 38.5 L4 24.5 L23.5 22 Z" fill={color} stroke="rgba(0, 0, 0, 0.18)" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="27" cy="22" r="1.8" fill="rgba(255, 255, 255, 0.6)" />
+    </svg>
+  );
+}
+
+export function SunIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <g stroke="#F9A825" strokeWidth="3.5" strokeLinecap="round">
+        <line x1="32" y1="6" x2="32" y2="12" />
+        <line x1="32" y1="52" x2="32" y2="58" />
+        <line x1="6" y1="32" x2="12" y2="32" />
+        <line x1="52" y1="32" x2="58" y2="32" />
+        <line x1="13.6" y1="13.6" x2="18" y2="18" />
+        <line x1="46" y1="46" x2="50.4" y2="50.4" />
+        <line x1="13.6" y1="50.4" x2="18" y2="46" />
+        <line x1="46" y1="18" x2="50.4" y2="13.6" />
+      </g>
+      <circle cx="32" cy="32" r="14" fill="#FFD54F" stroke="#F9A825" strokeWidth="2.5" />
+      <circle cx="27" cy="28" r="1.8" fill="rgba(255, 255, 255, 0.7)" />
+      <path d="M26 36 Q32 40.5 38 36" fill="none" stroke="#F57F17" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="23" cy="36" r="1.8" fill="#F57F17" />
+      <circle cx="41" cy="36" r="1.8" fill="#F57F17" />
+    </svg>
+  );
 }
 
 export function MoneyBagIcon({ size = 36 }: IconProps) {

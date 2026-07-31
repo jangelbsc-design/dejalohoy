@@ -89,7 +89,7 @@ export default function Dashboard() {
           <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>
         </div>
 
-        <div className="dash-card">
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/achievements')}>
           <span className="dash-label">Logros Alcanzados</span>
           <TargetIcon size={40} />
           <span className="dash-value">{time.days >= 1 ? 1 : 0}</span>
