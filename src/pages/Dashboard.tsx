@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
@@ -115,11 +115,11 @@ export default function Dashboard() {
   const months = Math.floor((time.days % 365) / 30);
 
   const mainTitle = years >= 1
-    ? `${years} ${years === 1 ? 'año' : 'años'}${months > 0 ? ` ${months} ${months === 1 ? 'mes' : 'meses'}` : ''}`
+    ? `${years} ${years === 1 ? 'aÃ±o' : 'aÃ±os'}${months > 0 ? ` ${months} ${months === 1 ? 'mes' : 'meses'}` : ''}`
     : months >= 1
       ? `${months} ${months === 1 ? 'mes' : 'meses'}`
       : time.days >= 1
-        ? `${time.days} ${time.days === 1 ? 'día' : 'días'}`
+        ? `${time.days} ${time.days === 1 ? 'dÃ­a' : 'dÃ­as'}`
         : time.hours >= 1
           ? `${time.hours} ${time.hours === 1 ? 'hora' : 'horas'}`
           : `${time.minutes} ${time.minutes === 1 ? 'minuto' : 'minutos'}`;
@@ -138,7 +138,7 @@ export default function Dashboard() {
         <div className="counter-hero-units">
           <div className="counter-unit">
             <span className="counter-unit-number">{time.days}</span>
-            <span className="counter-unit-label">Días</span>
+            <span className="counter-unit-label">DÃ­as</span>
           </div>
           <div className="counter-unit">
             <span className="counter-unit-number">{pad(time.hours)}</span>
@@ -157,50 +157,50 @@ export default function Dashboard() {
 
       <div className="dash-grid">
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/guide')}>
-          <span className="dash-label">Guía Asistida</span>
-          <BrainIcon size={64} />
+          <span className="dash-label">GuÃ­a Asistida</span>
+          <BrainIcon size={96} />
           <span className="dash-value">Ver ahora</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/wishlist')}>
           <span className="dash-label">Dinero Ahorrado</span>
-          <MoneyBagIcon size={64} />
+          <MoneyBagIcon size={96} />
           <span className="dash-value">Bs {safeNumber(money).toFixed(2)}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/medals')}>
           <span className="dash-label">Cigarros No Fumados</span>
-          <BrokenCigaretteIcon size={64} />
+          <BrokenCigaretteIcon size={96} />
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/health')}>
           <span className="dash-label">Salud Ganada</span>
-          <SmilingHeartIcon size={64} />
+          <SmilingHeartIcon size={96} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/life')}>
           <span className="dash-label">Vida Recuperada</span>
-          <ClockFaceIcon size={64} />
+          <ClockFaceIcon size={96} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/achievements')}>
           <span className="dash-label">Logros Alcanzados</span>
-          <TargetIcon size={64} />
+          <TargetIcon size={96} />
           <span className="dash-value">{time.days >= 1 ? 1 : 0}</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowDiary(true)}>
           <span className="dash-label">Diario</span>
-          <OpenBookIcon size={64} />
+          <OpenBookIcon size={96} />
           <span className="dash-value">Escribe</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => setShowNoFumes(true)}>
           <span className="dash-label">No lo hagas</span>
-          <StopHandIcon size={64} />
+          <StopHandIcon size={96} />
           <span className="dash-value">Leeme primero</span>
         </div>
       </div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
       <div className="dash-actions">
         <button className="btn-assistant" onClick={() => setShowAssistant(true)}>
           <MessageCircle size={24} />
-          Asistente de Caída
+          Asistente de CaÃ­da
         </button>
 
         <button className="btn-assistant" onClick={() => navigate('/profile')}>
@@ -218,28 +218,28 @@ export default function Dashboard() {
 
         <button className="btn-logout" onClick={handleLogout}>
           <LogOut size={24} />
-          Cerrar sesión
+          Cerrar sesiÃ³n
         </button>
       </div>
 
-      {/* Modal Asistente de Caída */}
+      {/* Modal Asistente de CaÃ­da */}
       {showAssistant && (
         <div className="modal-overlay" onClick={() => setShowAssistant(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowAssistant(false)}>
               <X size={20} />
             </button>
-            <h2 className="modal-title">Asistente de Caída</h2>
+            <h2 className="modal-title">Asistente de CaÃ­da</h2>
             <p className="modal-body">Si has fumado, no te preocupes. Un tropiezo no es el fin de tu camino. Esto es lo que puedes hacer ahora:</p>
             <ul className="modal-list">
-              <li><strong>Reconócelo como un tropiezo, no una derrota.</strong> No dejes que un cigarro arruine todo tu progreso. Lo importante es seguir adelante.</li>
-              <li><strong>Identifica el desencadenante.</strong> ¿Estrés? ¿Alcohol? ¿Ansiedad? Saber qué lo causó te ayudará a prepararte para la próxima vez.</li>
-              <li><strong>Reinicia ahora mismo.</strong> Presiona "Caí" para reiniciar el contador y vuelve a empezar. Cada minuto sin fumar cuenta.</li>
+              <li><strong>ReconÃ³celo como un tropiezo, no una derrota.</strong> No dejes que un cigarro arruine todo tu progreso. Lo importante es seguir adelante.</li>
+              <li><strong>Identifica el desencadenante.</strong> Â¿EstrÃ©s? Â¿Alcohol? Â¿Ansiedad? Saber quÃ© lo causÃ³ te ayudarÃ¡ a prepararte para la prÃ³xima vez.</li>
+              <li><strong>Reinicia ahora mismo.</strong> Presiona "CaÃ­" para reiniciar el contador y vuelve a empezar. Cada minuto sin fumar cuenta.</li>
               <li><strong>Bebe agua y respira profundo.</strong> Toma un vaso de agua y haz 10 respiraciones lentas para calmar la ansiedad.</li>
               <li><strong>Busca apoyo.</strong> Habla con alguien de confianza. Compartir lo que sientes reduce la carga y te fortalece.</li>
-              <li><strong>Retoma tu plan.</strong> Revisa por qué decidiste dejar de fumar. Tus razones siguen siendo válidas.</li>
+              <li><strong>Retoma tu plan.</strong> Revisa por quÃ© decidiste dejar de fumar. Tus razones siguen siendo vÃ¡lidas.</li>
             </ul>
-            <p className="modal-quote">"El éxito no es no caer nunca, sino levantarse cada vez que caes." — Confucio</p>
+            <p className="modal-quote">"El Ã©xito no es no caer nunca, sino levantarse cada vez que caes." â€” Confucio</p>
           </div>
         </div>
       )}
@@ -252,7 +252,7 @@ export default function Dashboard() {
               <X size={20} />
             </button>
             <h2 className="modal-title">Mi Diario</h2>
-            <p className="modal-body">Escribe cómo te sientes en este momento y guarda tu registro. Desahogarte ayuda a liberar la ansiedad.</p>
+            <p className="modal-body">Escribe cÃ³mo te sientes en este momento y guarda tu registro. Desahogarte ayuda a liberar la ansiedad.</p>
             <textarea
               className="diary-textarea"
               placeholder="Hoy me siento..."
@@ -286,7 +286,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <p className="modal-quote" style={{ marginTop: '16px' }}>
-                Aún no tienes registros. Guarda el primero y empieza a desahogarte. ✨
+                AÃºn no tienes registros. Guarda el primero y empieza a desahogarte. âœ¨
               </p>
             )}
           </div>
@@ -303,21 +303,21 @@ export default function Dashboard() {
             <h2 className="modal-title">No lo hagas</h2>
             <p className="modal-body">Antes de fumarlo, lee esto:</p>
             <ul className="modal-list">
-              <li><strong>¿Realmente lo necesitas?</strong> El craving es solo una señal de tu cerebro acostumbrado a la nicotina. Pasa en minutos. No le des poder.</li>
-              <li><strong>¿Qué vas a perder?</strong> Cada cigarro reinicia tu progreso. El tiempo, el dinero, la salud y el orgullo de haberlo logrado.</li>
-              <li><strong>¿Qué pasará después?</strong> La culpa y la frustración serán peores que el alivio de 3 minutos. No vale la pena.</li>
-              <li><strong>Haz esto primero:</strong> Bebe agua. Respira 4-7-8. Camina 5 minutos. Si después de eso aún quieres fumarlo, vuelve a leer esto.</li>
-              <li><strong>Mereces estar libre.</strong> Tomaste la mejor decisión de tu vida. No dejes que un momento de debilidad la arruine.</li>
+              <li><strong>Â¿Realmente lo necesitas?</strong> El craving es solo una seÃ±al de tu cerebro acostumbrado a la nicotina. Pasa en minutos. No le des poder.</li>
+              <li><strong>Â¿QuÃ© vas a perder?</strong> Cada cigarro reinicia tu progreso. El tiempo, el dinero, la salud y el orgullo de haberlo logrado.</li>
+              <li><strong>Â¿QuÃ© pasarÃ¡ despuÃ©s?</strong> La culpa y la frustraciÃ³n serÃ¡n peores que el alivio de 3 minutos. No vale la pena.</li>
+              <li><strong>Haz esto primero:</strong> Bebe agua. Respira 4-7-8. Camina 5 minutos. Si despuÃ©s de eso aÃºn quieres fumarlo, vuelve a leer esto.</li>
+              <li><strong>Mereces estar libre.</strong> Tomaste la mejor decisiÃ³n de tu vida. No dejes que un momento de debilidad la arruine.</li>
             </ul>
 
             <div className="motivation-section">
-              <h3 className="motivation-title">Tu porqué</h3>
+              <h3 className="motivation-title">Tu porquÃ©</h3>
 
               {motivationPhoto ? (
                 <div className="motivation-photo-wrap">
                   <img 
                     src={motivationPhoto} 
-                    alt="Tu motivación" 
+                    alt="Tu motivaciÃ³n" 
                     className="motivation-photo" 
                     style={{ objectPosition: `50% ${photoPos}%` }}
                   />
@@ -352,7 +352,7 @@ export default function Dashboard() {
 
               <textarea
                 className="diary-textarea motivation-textarea"
-                placeholder="Escribe aquí por qué estás dejando de fumar (tu familia, tu salud, tus sueños)..."
+                placeholder="Escribe aquÃ­ por quÃ© estÃ¡s dejando de fumar (tu familia, tu salud, tus sueÃ±os)..."
                 value={motivationText}
                 onChange={(e) => setMotivationText(e.target.value)}
                 rows={3}
@@ -367,7 +367,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <p className="modal-quote">"Un antojo es solo un pensamiento. Tú eres más grande que tus pensamientos."</p>
+            <p className="modal-quote">"Un antojo es solo un pensamiento. TÃº eres mÃ¡s grande que tus pensamientos."</p>
           </div>
         </div>
       )}
