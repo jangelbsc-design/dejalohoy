@@ -73,6 +73,26 @@ function emptyData(): AccountData {
   };
 }
 
+function mergeData(cloud: AccountData | null | undefined, local: AccountData | null | undefined): AccountData | null {
+  if (!cloud && !local) return null;
+  if (!cloud) return local ?? null;
+  if (!local) return cloud;
+
+  const byId = new Map<string, DiaryEntry>();
+  for (const entry of [...local.diary, ...cloud.diary]) {
+    byId.set(entry.id, entry);
+  }
+  const diary = [...byId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
+  return {
+    profile: cloud.profile ?? local.profile,
+    diary,
+    goals: cloud.goals.length > 0 ? cloud.goals : local.goals,
+    motivationPhoto: cloud.motivationPhoto ?? local.motivationPhoto,
+    motivationText: cloud.motivationText || local.motivationText,
+  };
+}
+
 export function snapshotStores(): AccountData {
   return {
     profile: useStore.getState().profile,
@@ -121,8 +141,14 @@ export const useAuthStore = create<AuthState>()(
               data: { session },
             } = await supabase.auth.getSession();
             if (session?.user) {
-              const data = await cloudLoadData();
-              if (data) loadIntoStores(data);
+              const cloud = await cloudLoadData();
+              const merged = mergeData(cloud, snapshotStores());
+              if (merged) {
+                loadIntoStores(merged);
+                if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+                  await cloudSaveData(merged, session.user.id, displayName(session.user.email ?? ''));
+                }
+              }
               set({
                 currentUser: displayName(session.user.email ?? ''),
                 userId: session.user.id,
@@ -197,9 +223,13 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (!res.id) return { ok: false, error: 'No se pudo iniciar sesión.' };
-          const data = await cloudLoadData();
-          if (hasData(data)) {
-            loadIntoStores(data);
+          const cloud = await cloudLoadData();
+          const merged = mergeData(cloud, snapshotStores());
+          if (merged) {
+            loadIntoStores(merged);
+            if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+              await cloudSaveData(merged, res.id, usernameFromEmail(res.email ?? name));
+            }
           } else {
             const username = usernameFromEmail(res.email ?? name);
             const local = get().accounts[username] ?? get().accounts[name];

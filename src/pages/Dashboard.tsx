@@ -81,9 +81,10 @@ export default function Dashboard() {
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
-        const maxSize = 800;
+        const maxSize = 640;
         let width = img.width;
         let height = img.height;
+        if (!width || !height) return;
         if (width > maxSize || height > maxSize) {
           const ratio = Math.min(maxSize / width, maxSize / height);
           width = Math.round(width * ratio);
@@ -95,7 +96,10 @@ export default function Dashboard() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         ctx.drawImage(img, 0, 0, width, height);
-        setMotivationPhoto(canvas.toDataURL('image/jpeg', 0.75));
+        setMotivationPhoto(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.onerror = () => {
+        alert('No se pudo leer la imagen. Probá con otra foto.');
       };
       img.src = reader.result as string;
     };
