@@ -196,3 +196,14 @@ export function ShieldHeartIcon({ size = 36 }: IconProps) {
     </svg>
   );
 }
+
+export function BrainIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path d="M14 24 C6 22 6 34 12 36 C8 44 18 50 22 44 C26 52 38 52 42 44 C46 50 56 44 52 36 C58 34 58 22 50 24 C50 16 38 14 36 22 C34 14 22 16 24 22 C20 16 14 18 14 24 Z" fill="#F8BBD0" stroke="#C2185B" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M24 30 L28 30 L30 27 L32 33 L34 26 L36 30 L40 30" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="16" cy="44" r="2.5" fill="#C2185B" opacity="0.5" />
+      <circle cx="48" cy="44" r="2.5" fill="#C2185B" opacity="0.5" />
+    </svg>
+  );
+}

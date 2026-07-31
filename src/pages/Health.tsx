@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 import { differenceInMinutes } from 'date-fns';
 import { ArrowLeft, X, CheckCircle2, Circle, Share2, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
-import { SmilingHeartIcon, LungsIcon, DropletIcon, TasteFaceIcon, BreathingIcon, HeartbeatIcon, CleanLungsIcon, ShieldHeartIcon } from '../components/CartoonIcons';
+import { SmilingHeartIcon, LungsIcon, DropletIcon, TasteFaceIcon, BreathingIcon, HeartbeatIcon, CleanLungsIcon, ShieldHeartIcon, BrainIcon } from '../components/CartoonIcons';
 
 interface HealthMilestone {
   id: number;
@@ -101,6 +101,53 @@ const formatElapsed = (minutes: number): string => {
   return `${m} min`;
 };
 
+const DEPENDENCE_FULL_TIME = 525600;
+
+const DEPENDENCE_STAGES = [
+  {
+    timeReq: 20,
+    timeLabel: '20 min',
+    title: 'Primer paso',
+    text: 'Tu ritmo cardíaco ya empieza a bajar. La urgencia física de fumando comienza a controlarse.',
+  },
+  {
+    timeReq: 480,
+    timeLabel: '8 horas',
+    title: 'Nicotina en caída',
+    text: 'La nicotina de tu sangre baja un 93%. Tu cuerpo empieza a sentir la ausencia y a reclamar, es señal de que se está limpiando.',
+  },
+  {
+    timeReq: 1440,
+    timeLabel: '24 horas',
+    title: 'Nicotina eliminada',
+    text: 'La nicotina se elimina por completo de tu organismo. Ya no hay sustancia adictiva en tu cuerpo.',
+  },
+  {
+    timeReq: 4320,
+    timeLabel: '72 horas',
+    title: 'Cuerpo libre de nicotina',
+    text: 'Tu cuerpo está 100% libre de nicotina. Los síntomas de abstinencia llegan a su punto máximo: es la señal de que estás venciendo la adicción.',
+  },
+  {
+    timeReq: 20160,
+    timeLabel: '2 semanas',
+    title: 'Dependencia física cede',
+    text: 'La dependencia física va desapareciendo. Los antojos intensos se hacen menos frecuentes y más manejables.',
+  },
+  {
+    timeReq: 43200,
+    timeLabel: '1 mes',
+    title: 'Adicción física superada',
+    text: 'La adicción física a la nicotina queda prácticamente superada. Lo que queda es la costumbre, que también se irá.',
+  },
+  {
+    timeReq: 525600,
+    timeLabel: '1 año',
+    title: 'Dependencia superada',
+    text: 'Un año sin fumar: tu riesgo de enfermedad coronaria se reduce a la mitad y los antojos son casi inexistentes. Estás libre.',
+  },
+];
+
 export default function Health() {
   const navigate = useNavigate();
   const profile = useStore((state) => state.profile);
@@ -109,6 +156,7 @@ export default function Health() {
   const [sharing, setSharing] = useState(false);
   const [sharePreview, setSharePreview] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
+  const [showDependence, setShowDependence] = useState(false);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,6 +174,12 @@ export default function Health() {
 
   const selectedProgress = selected ? Math.min((minutesFree / selected.timeReq) * 100, 100) : 0;
   const selectedComplete = selected ? minutesFree >= selected.timeReq : false;
+
+  const dependenceProgress = Math.min((minutesFree / DEPENDENCE_FULL_TIME) * 100, 100);
+  const currentStage = DEPENDENCE_STAGES.reduce(
+    (acc, stage) => (minutesFree >= stage.timeReq ? stage : acc),
+    DEPENDENCE_STAGES[0]
+  );
 
   const handleShare = async () => {
     if (!selected || sharing) return;
@@ -240,6 +294,26 @@ export default function Health() {
             </button>
           );
         })}
+
+        <button
+          className={`health-card ${dependenceProgress >= 100 ? 'health-card-complete' : ''}`}
+          onClick={() => setShowDependence(true)}
+        >
+          <div className="health-card-check">
+            {dependenceProgress >= 100 ? (
+              <CheckCircle2 size={16} color="#4CAF50" />
+            ) : (
+              <Circle size={16} color="#B0BEC5" />
+            )}
+          </div>
+          <BrainIcon size={42} />
+          <span className="health-card-title">Dependencia a la Nicotina</span>
+          <span className="health-card-time">Libérate</span>
+          <div className="health-bar-track">
+            <div className="health-bar-fill" style={{ width: `${dependenceProgress}%` }} />
+          </div>
+          <span className="health-card-percent">{dependenceProgress.toFixed(0)}%</span>
+        </button>
       </div>
 
       {selected && (
@@ -314,6 +388,72 @@ export default function Health() {
             <span className="health-share-date">{shareDate}</span>
           </div>
           <div className="health-share-card-footer">Hecho con Déjalo Hoy</div>
+        </div>
+      )}
+
+      {showDependence && (
+        <div className="modal-overlay" onClick={() => setShowDependence(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowDependence(false)}>
+              <X size={20} />
+            </button>
+            <div className="health-modal-icon">
+              <BrainIcon size={56} />
+            </div>
+            <h2 className="modal-title" style={{ textAlign: 'center' }}>Dependencia a la Nicotina</h2>
+
+            <div className="health-modal-stats">
+              <div className="health-modal-stat">
+                <span className="health-modal-stat-label">Tiempo sin fumar</span>
+                <span className="health-modal-stat-value">{formatElapsed(minutesFree)}</span>
+              </div>
+              <div className="health-modal-stat">
+                <span className="health-modal-stat-label">Camino a la libertad</span>
+                <span className="health-modal-stat-value">{dependenceProgress.toFixed(0)}%</span>
+              </div>
+            </div>
+
+            <div className="health-bar-track" style={{ height: '12px', margin: '12px 0 8px' }}>
+              <div className="health-bar-fill" style={{ width: `${dependenceProgress}%` }} />
+            </div>
+            <div className="health-modal-progress-text">
+              {dependenceProgress >= 100
+                ? '✓ Dependencia superada'
+                : `Etapa actual: ${currentStage.title}`}
+            </div>
+
+            <p className="modal-body" style={{ marginTop: '12px' }}>{currentStage.text}</p>
+
+            <div className="health-stages-list">
+              {DEPENDENCE_STAGES.map((stage, index) => {
+                const reached = minutesFree >= stage.timeReq;
+                return (
+                  <div
+                    key={stage.timeReq}
+                    className={`health-stage-item ${reached ? 'health-stage-reached' : ''} ${
+                      stage === currentStage && !reached ? 'health-stage-current' : ''
+                    }`}
+                  >
+                    <div className="health-stage-check">
+                      {reached ? (
+                        <CheckCircle2 size={18} color="#4CAF50" />
+                      ) : (
+                        <Circle size={18} color="#B0BEC5" />
+                      )}
+                    </div>
+                    <div className="health-stage-info">
+                      <span className="health-stage-title">
+                        {index + 1}. {stage.title}
+                      </span>
+                      <span className="health-stage-time">{stage.timeLabel} sin fumar</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="health-modal-source">Fuente: American Cancer Society, Smokefree.gov (NCI)</p>
+          </div>
         </div>
       )}
 
