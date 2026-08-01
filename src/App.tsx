@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useStore, UserProfileData } from './store/useStore';
 import { useAuthStore } from './store/authStore';
 import './core/sync';
-import Login from './pages/Login';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Guide from './pages/Guide';
@@ -45,7 +44,6 @@ const basePath = import.meta.env.BASE_URL.replace(/\/+$/, '');
 
 function Layout() {
   const profile = useStore((state) => state.profile);
-  const currentUser = useAuthStore((state) => state.currentUser);
   const ready = useAuthStore((state) => state.ready);
   const restoreSession = useAuthStore((state) => state.restoreSession);
   const location = useLocation();
@@ -71,10 +69,6 @@ function Layout() {
         <span className="boot-screen-text">Cargando tu progreso...</span>
       </div>
     );
-  }
-
-  if (!currentUser) {
-    return <Login />;
   }
 
   if (!profile && location.pathname !== '/onboarding') {

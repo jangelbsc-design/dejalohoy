@@ -253,6 +253,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         const { currentUser, userId, accounts } = get();
+        if (!currentUser && !userId) return;
         if (isCloudReady() && userId) {
           await cloudSaveData(snapshotStores(), userId, currentUser ?? '');
           await cloudLogout();

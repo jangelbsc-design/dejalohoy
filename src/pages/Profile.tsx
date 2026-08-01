@@ -83,7 +83,7 @@ export default function Profile() {
           </div>
           <div className="profile-user-info">
             <span className="profile-user-label">Cuenta activa</span>
-            <span className="profile-username">{currentUser}</span>
+            <span className="profile-username">{currentUser || 'Cuenta local'}</span>
           </div>
         </div>
         <p className="profile-note">
