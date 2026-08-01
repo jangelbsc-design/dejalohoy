@@ -126,6 +126,32 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   return false;
 }
 
+const SHARED_EMAIL = 'progreso@dejalohoy.app';
+const SHARED_PASSWORD = 'DejaloHoy2026!';
+
+async function ensureSharedAccount(): Promise<{ id: string; email: string } | null> {
+  if (!supabase) return null;
+
+  const signIn = await supabase.auth.signInWithPassword({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
+  if (signIn.data.user) {
+    return { id: signIn.data.user.id, email: signIn.data.user.email ?? SHARED_EMAIL };
+  }
+
+  const signUp = await supabase.auth.signUp({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
+  if (signUp.data.user) {
+    return { id: signUp.data.user.id, email: signUp.data.user.email ?? SHARED_EMAIL };
+  }
+
+  if (!signUp.error) {
+    const retry = await supabase.auth.signInWithPassword({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
+    if (retry.data.user) {
+      return { id: retry.data.user.id, email: retry.data.user.email ?? SHARED_EMAIL };
+    }
+  }
+
+  return null;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -135,29 +161,35 @@ export const useAuthStore = create<AuthState>()(
       ready: false,
 
       restoreSession: async () => {
-        if (isCloudReady()) {
-          if (supabase) {
-            const {
-              data: { session },
-            } = await supabase.auth.getSession();
-            if (session?.user) {
-              const cloud = await cloudLoadData();
-              const merged = mergeData(cloud, snapshotStores());
-              if (merged) {
-                loadIntoStores(merged);
-                if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
-                  await cloudSaveData(merged, session.user.id, displayName(session.user.email ?? ''));
-                }
-              }
-              set({
-                currentUser: displayName(session.user.email ?? ''),
-                userId: session.user.id,
-                ready: true,
-              });
-            } else {
-              set({ currentUser: null, userId: null, ready: true });
+        if (isCloudReady() && supabase) {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+
+          let user: { id: string; email: string | undefined } | null = session?.user
+            ? { id: session.user.id, email: session.user.email }
+            : null;
+          if (!user) {
+            user = await ensureSharedAccount();
+          }
+          if (!user) {
+            set({ currentUser: null, userId: null, ready: true });
+            return;
+          }
+
+          const cloud = await cloudLoadData();
+          const merged = mergeData(cloud, snapshotStores());
+          if (merged) {
+            loadIntoStores(merged);
+            if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+              await cloudSaveData(merged, user.id, displayName(user.email ?? ''));
             }
           }
+          set({
+            currentUser: displayName(user.email ?? ''),
+            userId: user.id,
+            ready: true,
+          });
           return;
         }
         set({ ready: true });
