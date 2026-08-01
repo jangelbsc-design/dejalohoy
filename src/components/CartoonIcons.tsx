@@ -51,6 +51,24 @@ export function RockHandIcon({ size = 36 }: IconProps) {
   );
 }
 
+export function GamepadIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <rect x="10" y="20" width="44" height="22" rx="11" fill="#455A64" stroke="#263238" strokeWidth="2.5" />
+      <rect x="13" y="36" width="10" height="13" rx="5" fill="#455A64" stroke="#263238" strokeWidth="2.5" />
+      <rect x="41" y="36" width="10" height="13" rx="5" fill="#455A64" stroke="#263238" strokeWidth="2.5" />
+      <rect x="16" y="26" width="4" height="12" rx="2" fill="#ECEFF1" />
+      <rect x="12" y="30" width="12" height="4" rx="2" fill="#ECEFF1" />
+      <circle cx="40" cy="27" r="3" fill="#EF5350" />
+      <circle cx="47" cy="34" r="3" fill="#66BB6A" />
+      <circle cx="40" cy="41" r="3" fill="#42A5F5" />
+      <circle cx="33" cy="34" r="3" fill="#FFD54F" />
+      <rect x="27" y="25" width="4" height="3" rx="1.5" fill="#90A4AE" />
+      <rect x="33" y="25" width="4" height="3" rx="1.5" fill="#90A4AE" />
+    </svg>
+  );
+}
+
 export function MoneyBagIcon({ size = 36 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">

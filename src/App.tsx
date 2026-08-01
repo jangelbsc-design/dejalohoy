@@ -12,6 +12,8 @@ import Achievements from './pages/Achievements';
 import Wishlist from './pages/Wishlist';
 import Medals from './pages/Medals';
 import Profile from './pages/Profile';
+import Games from './pages/Games';
+import Tetris from './pages/Tetris';
 
 function parseProfileFromUrl(): UserProfileData | null {
   const params = new URLSearchParams(window.location.search);
@@ -91,6 +93,8 @@ function Layout() {
           <Route path="/health" element={<Health />} />
           <Route path="/life" element={<LifeRecovered />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/games/tetris" element={<Tetris />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>

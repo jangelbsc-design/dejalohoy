@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { X, Save, Trash2, Camera, XCircle, Heart, User } from 'lucide-react';
-import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon } from '../components/CartoonIcons';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -203,6 +203,12 @@ export default function Dashboard() {
           <span className="dash-label">No lo hagas</span>
           <StopHandIcon size={48} />
           <span className="dash-value">Leeme primero</span>
+        </div>
+
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/games')}>
+          <span className="dash-label">Juegos</span>
+          <GamepadIcon size={48} />
+          <span className="dash-value">Ver ahora</span>
         </div>
       </div>
 
