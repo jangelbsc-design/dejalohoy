@@ -34,6 +34,23 @@ export function SunIcon({ size = 36 }: IconProps) {
   );
 }
 
+export function RockHandIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <path
+        d="M22 10 L28 10 L28 33 L31 26 L38 26 L38 33 L38 15 L43.5 15 L46 35 L46 46 C46 53 42 58 34 58 C27 58 20 55 20 46 C20 41 21 36 22 33 Z"
+        fill="#FFCC80"
+        stroke="#B4690A"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+      <rect x="16" y="36" width="30" height="10" rx="5" transform="rotate(-15 31 41)" fill="#FFCC80" stroke="#B4690A" strokeWidth="2.5" />
+      <rect x="23" y="11" width="4" height="4.5" rx="2" fill="#FFE0B2" />
+      <rect x="39.2" y="16" width="3" height="3.5" rx="1.5" fill="#FFE0B2" />
+    </svg>
+  );
+}
+
 export function MoneyBagIcon({ size = 36 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">

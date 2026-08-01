@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { differenceInMinutes } from 'date-fns';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { StarIcon, SunIcon } from '../components/CartoonIcons';
+import { StarIcon, SunIcon, RockHandIcon } from '../components/CartoonIcons';
 
 interface Achievement {
   id: number;
-  kind: 'star' | 'sun';
+  kind: 'star' | 'sun' | 'rock';
   count: number;
   hours: number;
+  months?: number;
 }
 
 const STAR_COLORS = ['#FF5A79', '#4FC3F7', '#FFB703', '#8E44AD', '#2ECC71', '#FF6B35', '#00BCD4', '#E91E63', '#7E57C2', '#26A69A'];
@@ -36,11 +37,15 @@ const buildAchievements = (): Achievement[] => {
 
   h = 216;
   let suns = 1;
-  const maxHours = 365.25 * 24;
-  while (h <= maxHours) {
+  while (h <= 1560) {
     list.push({ id: id++, kind: 'sun', count: suns, hours: h });
     suns += 1;
     h += 168;
+  }
+
+  const HOURS_PER_MONTH = 730.5;
+  for (const months of [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 30]) {
+    list.push({ id: id++, kind: 'rock', count: 1, months, hours: months * HOURS_PER_MONTH });
   }
 
   return list;
@@ -56,6 +61,15 @@ const formatTime = (hours: number): string => {
     return w === 1 ? '1 semana' : `${w} semanas`;
   }
   return days === 1 ? '1 día' : `${days} días`;
+};
+
+const formatAchievementTime = (a: Achievement): string => {
+  if (a.kind === 'rock') {
+    const m = a.months ?? 0;
+    if (m === 30) return '2 años y medio';
+    return m === 1 ? '1 mes' : `${m} meses`;
+  }
+  return formatTime(a.hours);
 };
 
 export default function Achievements() {
@@ -95,8 +109,10 @@ export default function Achievements() {
       if (a.kind === 'star') {
         const color = STAR_COLORS[(a.id * 3 + j) % STAR_COLORS.length];
         icons.push(<StarIcon key={j} size={size} color={color} />);
-      } else {
+      } else if (a.kind === 'sun') {
         icons.push(<SunIcon key={j} size={size} />);
+      } else {
+        icons.push(<RockHandIcon key={j} size={size} />);
       }
     }
     return icons;
@@ -130,7 +146,9 @@ export default function Achievements() {
           <span className="ach-current-time">
             {current.kind === 'star'
               ? `${current.count} ${current.count === 1 ? 'estrella' : 'estrellas'} · ${formatTime(current.hours)}`
-              : `${current.count} ${current.count === 1 ? 'sol' : 'soles'} · ${formatTime(current.hours)}`}
+              : current.kind === 'sun'
+                ? `${current.count} ${current.count === 1 ? 'sol' : 'soles'} · ${formatTime(current.hours)}`
+                : formatAchievementTime(current)}
           </span>
         ) : (
           <span className="ach-current-time">Estrella · {formatTime(ACHIEVEMENTS[0].hours)}</span>
@@ -141,7 +159,7 @@ export default function Achievements() {
         </div>
         <span className="ach-progress-label">
           {next
-            ? `Falta ${formatTime(next.hours)} para el próximo logro`
+            ? `Falta ${formatAchievementTime(next)} para el próximo logro`
             : '¡Completaste todos los logros!'}
         </span>
       </div>
@@ -163,7 +181,7 @@ export default function Achievements() {
                 </span>
               )}
               <div className="ach-item-symbols">{renderSymbol(a, 22)}</div>
-              <span className="ach-item-time">{formatTime(a.hours)}</span>
+              <span className="ach-item-time">{formatAchievementTime(a)}</span>
             </div>
           );
         })}
