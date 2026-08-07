@@ -197,35 +197,51 @@ export const useAuthStore = create<AuthState>()(
         }
 
         if (isCloudReady() && supabase) {
-          const {
-            data: { session },
-          } = await supabase.auth.getSession();
+          let finished = false;
+          const finish = (patch: Partial<Pick<AuthState, 'currentUser' | 'userId'>>) => {
+            if (finished) return;
+            finished = true;
+            set({ ...patch, ready: true });
+          };
+          const timer = window.setTimeout(() => {
+            console.warn('Déjalo Hoy: la nube está lenta. Abriendo con tus datos locales.');
+            finish({});
+          }, 6000);
 
-          let user: { id: string; email: string | undefined } | null = session?.user
-            ? { id: session.user.id, email: session.user.email }
-            : null;
-          if (!user) {
-            user = await ensureSharedAccount();
-          }
-          if (!user) {
-            set({ currentUser: null, userId: null, ready: true });
+          try {
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+
+            let user: { id: string; email: string | undefined } | null = session?.user
+              ? { id: session.user.id, email: session.user.email }
+              : null;
+            if (!user) {
+              user = await ensureSharedAccount();
+            }
+            if (!user) {
+              window.clearTimeout(timer);
+              finish({ currentUser: null, userId: null });
+              return;
+            }
+
+            const cloud = await cloudLoadData();
+            const merged = mergeData(cloud, snapshotStores());
+            if (merged) {
+              loadIntoStores(merged);
+              if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
+                await cloudSaveData(merged, user.id, displayName(user.email ?? ''));
+              }
+            }
+            window.clearTimeout(timer);
+            finish({ currentUser: displayName(user.email ?? ''), userId: user.id });
+            return;
+          } catch (err) {
+            console.warn('Déjalo Hoy: no se pudo sincronizar con la nube.', err);
+            window.clearTimeout(timer);
+            finish({});
             return;
           }
-
-          const cloud = await cloudLoadData();
-          const merged = mergeData(cloud, snapshotStores());
-          if (merged) {
-            loadIntoStores(merged);
-            if (JSON.stringify(merged) !== JSON.stringify(cloud)) {
-              await cloudSaveData(merged, user.id, displayName(user.email ?? ''));
-            }
-          }
-          set({
-            currentUser: displayName(user.email ?? ''),
-            userId: user.id,
-            ready: true,
-          });
-          return;
         }
         set({ ready: true });
       },

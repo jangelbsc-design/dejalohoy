@@ -74,23 +74,18 @@ function Layout() {
     );
   }
 
-
   const currentUser = useAuthStore((state) => state.currentUser);
 
-  // Protected routes logic
-  if (!currentUser && location.pathname !== '/login') {
-    return <Navigate to="/login" replace />;
-  }
-
+  // La app entra directo (sin login obligatorio). Solo redirigimos por perfil.
   if (currentUser && location.pathname === '/login') {
-    return <Navigate to={profile ? "/" : "/onboarding"} replace />;
+    return <Navigate to={profile ? '/' : '/onboarding'} replace />;
   }
 
-  if (currentUser && !profile && location.pathname !== '/onboarding') {
+  if (!profile && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />;
   }
 
-  if (currentUser && profile && location.pathname === '/onboarding') {
+  if (profile && location.pathname === '/onboarding') {
     return <Navigate to="/" replace />;
   }
 
