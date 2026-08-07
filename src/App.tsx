@@ -49,6 +49,7 @@ function Layout() {
   const profile = useStore((state) => state.profile);
   const ready = useAuthStore((state) => state.ready);
   const restoreSession = useAuthStore((state) => state.restoreSession);
+  const currentUser = useAuthStore((state) => state.currentUser);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -74,8 +75,6 @@ function Layout() {
     );
   }
 
-  const currentUser = useAuthStore((state) => state.currentUser);
-
   // La app entra directo (sin login obligatorio). Solo redirigimos por perfil.
   if (currentUser && location.pathname === '/login') {
     return <Navigate to={profile ? '/' : '/onboarding'} replace />;
@@ -90,10 +89,9 @@ function Layout() {
   }
 
   return (
-    <div id="root">
-      <div className="page-container">
-        <Routes>
-          <Route path="/login" element={<Login />} />
+    <div className="page-container">
+      <Routes>
+        <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/guide" element={<Guide />} />
@@ -107,7 +105,6 @@ function Layout() {
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
-    </div>
   );
 }
 
