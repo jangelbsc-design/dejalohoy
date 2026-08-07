@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
-import { X, Save, Trash2, Camera, XCircle, Heart, User } from 'lucide-react';
-import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon } from '../components/CartoonIcons';
+import { useTriggersStore } from '../store/triggersStore';
+import { X, Save, Trash2, Camera, XCircle, Heart, User, ChevronDown, ChevronUp } from 'lucide-react';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -14,6 +15,24 @@ import {
   FreeTime,
   LifeRecovered
 } from '../core/utils/calculations';
+
+// ── Disparadores ─────────────────────────────────────────────────────────────
+const TRIGGER_OPTIONS = [
+  { key: 'estres',        label: '😤 Estrés',                  tip: 'Respira: inhala 4 seg, retén 7, exhala 8. El antojo pasa en 3-5 min. Una caminata rápida libera la tensión al instante.' },
+  { key: 'despues_comer', label: '🍽️ Después de comer',         tip: 'Levántate de la mesa enseguida. Cepíllate los dientes o tomá un vaso de agua fría. El nuevo ritual rompe la asociación.' },
+  { key: 'cafe',          label: '☕ Café',                      tip: 'Probá tomarlo en otro lugar o con la otra mano. El contexto nuevo rompe la asociación. Añadí un chicle sin azúcar.' },
+  { key: 'alcohol',       label: '🍺 Cerveza / Alcohol',         tip: 'El alcohol baja la guardia. Cambiá tu bebida esta semana o avisale a alguien de confianza tu plan.' },
+  { key: 'aburrimiento',  label: '😴 Aburrimiento',              tip: 'Mantén manos y mente ocupadas. Jugá al Tetris, llamá a alguien, hacé algo físico. El aburrimiento dura segundos si lo atacás.' },
+  { key: 'trabajo',       label: '💼 Problemas laborales',       tip: 'Salí del lugar 3 minutos. Anotalo en el Diario antes de que el impulso suba. El cigarro no resuelve nada — escribirlo sí.' },
+  { key: 'ver_fumar',     label: '👀 Ver a alguien fumar',       tip: 'Alejate físicamente. Recordá: ellos están atrapados, vos estás libre. La imagen pasa, el antojo también.' },
+  { key: 'ansiedad',      label: '😰 Ansiedad / Nervios',        tip: 'Técnica 5-4-3-2-1: nombrá 5 cosas que ves, 4 que tocás, 3 que escuchás, 2 que olés, 1 que saboreás. Te ancla al presente.' },
+  { key: 'noche',         label: '🌙 Noche / Insomnio',          tip: 'Tomá agua fría, salí al balcón o abrí la ventana, poné música tranquila. El antojo nocturno es corto si no te quedás quieto.' },
+  { key: 'redes',         label: '📱 Redes sociales / Pantallas', tip: 'Tomá el teléfono con intención. Poné una alarma de 5 min y hacé otra cosa. El scroll activa el piloto automático.' },
+  { key: 'otro',          label: '✏️ Otro...',                    tip: 'Anotaste algo específico. Revisalo en tu historial — ese detalle es clave para conocer tu mapa personal de ansiedad.' },
+] as const;
+
+type TriggerKey = (typeof TRIGGER_OPTIONS)[number]['key'];
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -30,6 +49,40 @@ export default function Dashboard() {
   const setMotivationText = useMotivationStore((state) => state.setText);
   const photoPos = useMotivationStore((state) => state.photoPos);
   const setPhotoPos = useMotivationStore((state) => state.setPhotoPos);
+
+  // Triggers state
+  const triggerEntries = useTriggersStore((state) => state.entries);
+  const addTriggerEntry = useTriggersStore((state) => state.addEntry);
+  const removeTriggerEntry = useTriggersStore((state) => state.removeEntry);
+  const [showTrigger, setShowTrigger] = useState(false);
+  const [selectedTrigger, setSelectedTrigger] = useState<TriggerKey | null>(null);
+  const [customTriggerText, setCustomTriggerText] = useState('');
+  const [savedTip, setSavedTip] = useState<string | null>(null);
+  const [showRanking, setShowRanking] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+
+  const triggerRanking = TRIGGER_OPTIONS
+    .map((opt) => ({ ...opt, count: triggerEntries.filter((e) => e.trigger === opt.key).length }))
+    .filter((o) => o.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const handleSaveTrigger = () => {
+    if (!selectedTrigger) return;
+    const option = TRIGGER_OPTIONS.find((o) => o.key === selectedTrigger)!;
+    const customText = selectedTrigger === 'otro' ? customTriggerText.trim() : undefined;
+    if (selectedTrigger === 'otro' && !customText) return;
+    addTriggerEntry(selectedTrigger, option.label, customText);
+    setSavedTip(option.tip);
+  };
+
+  const handleCloseTrigger = () => {
+    setShowTrigger(false);
+    setSelectedTrigger(null);
+    setCustomTriggerText('');
+    setSavedTip(null);
+    setShowRanking(false);
+    setShowHistory(false);
+  };
 
   const [time, setTime] = useState<FreeTime>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [money, setMoney] = useState(0);
@@ -210,6 +263,19 @@ export default function Dashboard() {
           <GamepadIcon size={48} />
           <span className="dash-value">Ver ahora</span>
         </div>
+
+        <div
+          className="dash-card dash-card-clickable dash-card-trigger"
+          onClick={() => { setShowTrigger(true); setSavedTip(null); setSelectedTrigger(null); }}
+        >
+          <span className="dash-label">Identificar disparador</span>
+          <TriggerEyesIcon size={48} />
+          <span className="dash-value">
+            {triggerEntries.length > 0
+              ? `${triggerEntries.length} registrado${triggerEntries.length === 1 ? '' : 's'}`
+              : 'Para prepararte mejor'}
+          </span>
+        </div>
       </div>
 
       {/* Modal Diario */}
@@ -337,6 +403,147 @@ export default function Dashboard() {
             </div>
 
             <p className="modal-quote">"Un antojo es solo un pensamiento. Tú eres más grande que tus pensamientos."</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Disparadores ───────────────────────────────────────────── */}
+      {showTrigger && (
+        <div className="modal-overlay" onClick={handleCloseTrigger}>
+          <div className="modal-content trigger-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={handleCloseTrigger}>
+              <X size={20} />
+            </button>
+
+            <div className="trigger-modal-header">
+              <TriggerEyesIcon size={40} />
+              <div>
+                <h2 className="modal-title trigger-modal-title">Identificar disparador</h2>
+                <p className="trigger-modal-subtitle">Para prepararte mejor la próxima vez.</p>
+              </div>
+            </div>
+
+            {!savedTip ? (
+              <>
+                <p className="modal-body">¿Qué ocurrió justo antes de sentir el impulso?</p>
+                <div className="trigger-options">
+                  {TRIGGER_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.key}
+                      className={`trigger-option-btn${selectedTrigger === opt.key ? ' selected' : ''}`}
+                      onClick={() => { setSelectedTrigger(opt.key); setCustomTriggerText(''); }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {selectedTrigger === 'otro' && (
+                  <textarea
+                    className="diary-textarea trigger-custom-textarea"
+                    placeholder="Describí qué pasó justo antes del impulso..."
+                    value={customTriggerText}
+                    onChange={(e) => setCustomTriggerText(e.target.value)}
+                    rows={3}
+                    autoFocus
+                  />
+                )}
+                <button
+                  className="diary-save-btn trigger-save-btn"
+                  onClick={handleSaveTrigger}
+                  disabled={
+                    !selectedTrigger ||
+                    (selectedTrigger === 'otro' && !customTriggerText.trim())
+                  }
+                >
+                  <Save size={18} />
+                  Guardar disparador
+                </button>
+              </>
+            ) : (
+              <div className="trigger-tip-wrap">
+                <div className="trigger-tip">
+                  <span className="trigger-tip-label">💡 Sugerencia para este momento</span>
+                  <p className="trigger-tip-text">{savedTip}</p>
+                </div>
+                <button
+                  className="diary-save-btn trigger-save-btn"
+                  style={{ background: 'linear-gradient(90deg,#8E7AF0,#F06292)', marginTop: '12px' }}
+                  onClick={() => { setSelectedTrigger(null); setSavedTip(null); setCustomTriggerText(''); }}
+                >
+                  + Registrar otro
+                </button>
+              </div>
+            )}
+
+            {/* ── Ranking de disparadores ───────────────── */}
+            {triggerEntries.length > 0 && (
+              <div className="trigger-stats-section">
+                <button
+                  className="trigger-stats-toggle"
+                  onClick={() => setShowRanking((v) => !v)}
+                >
+                  <span>📊 Disparadores registrados ({triggerEntries.length})</span>
+                  {showRanking ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+
+                {showRanking && (
+                  <>
+                    <div className="trigger-ranking">
+                      {triggerRanking.map((item, idx) => (
+                        <div key={item.key} className="trigger-rank-row">
+                          <span className="trigger-rank-medal">
+                            {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
+                          </span>
+                          <span className="trigger-rank-label">{item.label}</span>
+                          <div className="trigger-rank-bar-wrap">
+                            <div
+                              className="trigger-rank-bar"
+                              style={{ width: `${Math.round((item.count / triggerRanking[0].count) * 100)}%` }}
+                            />
+                          </div>
+                          <span className="trigger-rank-count">{item.count}x</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      className="trigger-history-toggle"
+                      onClick={() => setShowHistory((v) => !v)}
+                    >
+                      {showHistory ? 'Ocultar historial completo' : 'Ver historial completo'}
+                    </button>
+
+                    {showHistory && (
+                      <div className="trigger-history">
+                        {triggerEntries.map((entry) => (
+                          <div key={entry.id} className="trigger-history-item">
+                            <div className="trigger-history-left">
+                              <span className="trigger-history-label">{entry.label}</span>
+                              {entry.customText && (
+                                <span className="trigger-history-custom">"{entry.customText}"</span>
+                              )}
+                              <span className="trigger-history-date">
+                                {new Date(entry.createdAt).toLocaleString('es-ES', {
+                                  day: 'numeric', month: 'short', year: 'numeric',
+                                  hour: '2-digit', minute: '2-digit',
+                                })}
+                              </span>
+                            </div>
+                            <button
+                              className="diary-entry-delete"
+                              onClick={() => removeTriggerEntry(entry.id)}
+                              aria-label="Eliminar"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

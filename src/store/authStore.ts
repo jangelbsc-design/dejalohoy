@@ -17,6 +17,7 @@ import {
   usernameFromEmail,
 } from '../core/supabase';
 import { supabase } from '../core/supabaseClient';
+import { useTriggersStore, TriggerEntry } from './triggersStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -24,6 +25,7 @@ export interface AccountData {
   goals: WishlistGoal[];
   motivationPhoto: string | null;
   motivationText: string;
+  triggers?: TriggerEntry[];
 }
 
 export interface LocalAccount {
@@ -70,6 +72,7 @@ function emptyData(): AccountData {
     goals: defaultGoals(),
     motivationPhoto: null,
     motivationText: '',
+    triggers: [],
   };
 }
 
@@ -84,12 +87,21 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
   }
   const diary = [...byId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+  const byTriggerId = new Map<string, TriggerEntry>();
+  const localTriggers = local.triggers || [];
+  const cloudTriggers = cloud.triggers || [];
+  for (const entry of [...localTriggers, ...cloudTriggers]) {
+    byTriggerId.set(entry.id, entry);
+  }
+  const triggers = [...byTriggerId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
     goals: cloud.goals.length > 0 ? cloud.goals : local.goals,
     motivationPhoto: cloud.motivationPhoto ?? local.motivationPhoto,
     motivationText: cloud.motivationText || local.motivationText,
+    triggers,
   };
 }
 
@@ -100,6 +112,7 @@ export function snapshotStores(): AccountData {
     goals: useWishlistStore.getState().goals,
     motivationPhoto: useMotivationStore.getState().photo,
     motivationText: useMotivationStore.getState().text,
+    triggers: useTriggersStore.getState().entries,
   };
 }
 
@@ -108,6 +121,7 @@ export function loadIntoStores(data: AccountData) {
   useDiaryStore.setState({ entries: data.diary });
   useWishlistStore.setState({ goals: data.goals });
   useMotivationStore.setState({ photo: data.motivationPhoto, text: data.motivationText });
+  useTriggersStore.setState({ entries: data.triggers || [] });
 }
 
 function clearStores() {
@@ -115,6 +129,7 @@ function clearStores() {
   useDiaryStore.setState({ entries: [] });
   useWishlistStore.setState({ goals: defaultGoals() });
   useMotivationStore.setState({ photo: null, text: '' });
+  useTriggersStore.setState({ entries: [] });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -123,6 +138,7 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   if (data.diary && data.diary.length > 0) return true;
   if (data.motivationPhoto) return true;
   if (data.motivationText) return true;
+  if (data.triggers && data.triggers.length > 0) return true;
   return false;
 }
 
@@ -161,6 +177,25 @@ export const useAuthStore = create<AuthState>()(
       ready: false,
 
       restoreSession: async () => {
+        // Bootstrap 'Juange' / 'julizam' local profile if it doesn't exist
+        const currentAccounts = get().accounts;
+        if (!currentAccounts['Juange']) {
+          const currentSnapshot = snapshotStores();
+          set((state) => ({
+            accounts: {
+              ...state.accounts,
+              Juange: {
+                passwordHash: hashPassword('julizam'),
+                data: currentSnapshot,
+              },
+            },
+          }));
+          // If the user already has progress (profile setup), log them in automatically
+          if (currentSnapshot.profile) {
+            set({ currentUser: 'Juange', userId: null });
+          }
+        }
+
         if (isCloudReady() && supabase) {
           const {
             data: { session },
@@ -354,3 +389,4 @@ useStore.subscribe(syncAccount);
 useDiaryStore.subscribe(syncAccount);
 useWishlistStore.subscribe(syncAccount);
 useMotivationStore.subscribe(syncAccount);
+useTriggersStore.subscribe(syncAccount);

@@ -14,6 +14,7 @@ import Medals from './pages/Medals';
 import Profile from './pages/Profile';
 import Games from './pages/Games';
 import Tetris from './pages/Tetris';
+import Login from './pages/Login';
 
 function parseProfileFromUrl(): UserProfileData | null {
   const params = new URLSearchParams(window.location.search);
@@ -73,11 +74,23 @@ function Layout() {
     );
   }
 
-  if (!profile && location.pathname !== '/onboarding') {
+
+  const currentUser = useAuthStore((state) => state.currentUser);
+
+  // Protected routes logic
+  if (!currentUser && location.pathname !== '/login') {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (currentUser && location.pathname === '/login') {
+    return <Navigate to={profile ? "/" : "/onboarding"} replace />;
+  }
+
+  if (currentUser && !profile && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />;
   }
 
-  if (profile && location.pathname === '/onboarding') {
+  if (currentUser && profile && location.pathname === '/onboarding') {
     return <Navigate to="/" replace />;
   }
 
@@ -85,6 +98,7 @@ function Layout() {
     <div id="root">
       <div className="page-container">
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Dashboard />} />
           <Route path="/guide" element={<Guide />} />

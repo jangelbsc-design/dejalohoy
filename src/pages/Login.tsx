@@ -5,7 +5,6 @@ export default function Login() {
   const register = useAuthStore((state) => state.register);
   const login = useAuthStore((state) => state.login);
   const resetPassword = useAuthStore((state) => state.resetPassword);
-  const currentUser = useAuthStore((state) => state.currentUser);
 
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
@@ -42,12 +41,14 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-logo">🚭</div>
+        <div className="login-logo-wrap">
+          <span className="login-logo-emoji">🚭</span>
+        </div>
         <h1 className="login-title">Déjalo Hoy</h1>
         <p className="login-subtitle">
           {mode === 'login'
-            ? 'Ingresá tus credenciales para cargar tu progreso desde cualquier dispositivo.'
-            : 'Creá tu cuenta y guardá tu progreso en la nube.'}
+            ? 'Iniciá sesión para continuar con tu progreso.'
+            : 'Creá un nuevo perfil para empezar desde cero.'}
         </p>
 
         <div className="login-mode">
@@ -69,13 +70,14 @@ export default function Login() {
               setInfo(null);
             }}
           >
-            Crear cuenta
+            Crear perfil
           </button>
         </div>
 
         <div className="input-group">
-          <label>Usuario o email</label>
+          <label className="login-input-label">Usuario o Email</label>
           <input
+            className="login-input"
             type="text"
             autoComplete="username"
             placeholder="Tu nombre de usuario"
@@ -85,8 +87,9 @@ export default function Login() {
         </div>
 
         <div className="input-group">
-          <label>Contraseña</label>
+          <label className="login-input-label">Contraseña</label>
           <input
+            className="login-input"
             type="password"
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             placeholder="Mínimo 4 caracteres"
@@ -98,26 +101,28 @@ export default function Login() {
           />
         </div>
 
-        {error && <p className="login-error">{error}</p>}
-        {info && <p className="login-info">{info}</p>}
+        {error && <div className="login-error-card">{error}</div>}
+        {info && <div className="login-info-card">{info}</div>}
 
-        <button className="btn-primary login-submit" onClick={handleSubmit} disabled={loading}>
+        <button className="login-submit-btn" onClick={handleSubmit} disabled={loading}>
           {loading
             ? 'Un momento...'
             : mode === 'login'
-              ? 'Entrar a mi cuenta'
-              : 'Crear cuenta y empezar'}
+              ? 'Entrar a mi perfil'
+              : 'Crear perfil y empezar'}
         </button>
 
         {mode === 'login' && (
-          <button className="login-forgot" onClick={handleForgot} disabled={loading}>
+          <button className="login-forgot-btn" onClick={handleForgot} disabled={loading}>
             ¿Olvidaste tu contraseña?
           </button>
         )}
 
-        <p className="login-note">
-          {currentUser ? `Sesión: ${currentUser}` : 'Tu progreso se sincroniza con la nube.'}
-        </p>
+        <div className="login-credential-tip">
+          <span className="login-credential-tip-title">ℹ️ Nota de perfil:</span>
+          <p>Para conservar tu avance usa:</p>
+          <p>Usuario: <strong>Juange</strong> | Contraseña: <strong>julizam</strong></p>
+        </div>
       </div>
     </div>
   );

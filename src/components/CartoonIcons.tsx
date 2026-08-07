@@ -274,3 +274,28 @@ export function BrainIcon({ size = 36 }: IconProps) {
     </svg>
   );
 }
+
+export function TriggerEyesIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      {/* Left eye — normal, alert */}
+      <ellipse cx="18" cy="34" rx="13" ry="14" fill="#FFFDE7" stroke="#F57F17" strokeWidth="2.5" />
+      <circle cx="18" cy="35" r="7" fill="#5C4033" />
+      <circle cx="18" cy="35" r="3.5" fill="#1A237E" />
+      <circle cx="20.5" cy="32.5" r="2" fill="white" />
+      {/* Left eyebrow — calm */}
+      <path d="M8 20 Q18 17 28 20" fill="none" stroke="#795548" strokeWidth="2.5" strokeLinecap="round" />
+
+      {/* Right eye — smaller, squinted/stressed */}
+      <ellipse cx="46" cy="37" rx="9" ry="8" fill="#FFFDE7" stroke="#F57F17" strokeWidth="2.5" />
+      <circle cx="46" cy="37" r="5" fill="#5C4033" />
+      <circle cx="46" cy="37" r="2.5" fill="#1A237E" />
+      <circle cx="48" cy="35" r="1.4" fill="white" />
+      {/* Right eyebrow — furrowed/stressed */}
+      <path d="M38 25 Q46 20 54 24" fill="none" stroke="#795548" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Stress wrinkle above right brow */}
+      <path d="M41 28 L43 25" fill="none" stroke="#795548" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M46 26 L47 23" fill="none" stroke="#795548" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}

@@ -476,105 +476,204 @@ html {
 }
 
 .login-card {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  border-radius: 24px;
-  padding: 32px 28px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 36px 28px;
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18), 0 0 40px rgba(255, 255, 255, 0.05) inset;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
 }
 
-.login-logo {
-  font-size: 56px;
-  text-align: center;
-  margin-bottom: 8px;
+.login-logo-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.login-logo-emoji {
+  font-size: 40px;
 }
 
 .login-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
-  color: var(--primary);
-  text-align: center;
+  color: white;
   margin-bottom: 6px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .login-subtitle {
   font-size: 14px;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-bottom: 22px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 24px;
   line-height: 1.4;
 }
 
 .login-mode {
   display: flex;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
   padding: 4px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .login-mode-btn {
   flex: 1;
   border: none;
   background: transparent;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .login-mode-btn-active {
-  background: var(--surface);
-  color: var(--primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.login-error {
-  color: var(--danger);
+.login-input-label {
+  display: block;
+  text-align: left;
   font-size: 13px;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 6px;
 }
 
-.login-info {
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 12px;
-  line-height: 1.4;
-}
-
-.login-forgot {
-  margin-top: 12px;
+.login-input {
   width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  outline: none;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.login-input:focus {
+  border-color: white;
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+.login-error-card {
+  background: rgba(239, 35, 60, 0.15);
+  border: 1.5px solid rgba(239, 35, 60, 0.4);
+  color: #ffd8dc;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.login-info-card {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1.5px solid rgba(76, 175, 80, 0.4);
+  color: #e8f5e9;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.login-submit-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #FFB703, #FF8F00);
+  color: #2B2D42;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 183, 3, 0.35);
+  transition: all 0.2s ease;
+}
+
+.login-submit-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(255, 183, 3, 0.2);
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-forgot-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
   background: none;
   border: none;
-  color: var(--primary);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
 }
 
-.login-submit {
-  margin-top: 4px;
+.login-forgot-btn:hover {
+  color: white;
 }
 
-.login-note {
-  margin-top: 16px;
-  font-size: 11px;
-  color: var(--text-secondary);
-  text-align: center;
-  line-height: 1.4;
+.login-credential-tip {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  text-align: left;
 }
+
+.login-credential-tip-title {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: white;
+}
+
+.login-credential-tip strong {
+  color: #ffe082;
+}
+
 
 /* Guide Page */
 .guide-page {
@@ -2498,5 +2597,253 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* ════════════════════════════════════════════════════════════
+   DISPARADORES — Identificar disparador
+   ════════════════════════════════════════════════════════════ */
 
+/* Card accent */
+.dash-card-trigger {
+  border-color: rgba(255, 235, 59, 0.4);
+  background: rgba(255, 235, 59, 0.10);
+}
 
+/* Modal header */
+.trigger-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.trigger-modal-title {
+  margin-bottom: 2px;
+  font-size: 20px;
+}
+
+.trigger-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Chip options */
+.trigger-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.trigger-option-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1.5px solid rgba(0, 0, 0, 0.10);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  line-height: 1.3;
+}
+
+.trigger-option-btn:active {
+  transform: scale(0.97);
+}
+
+.trigger-option-btn.selected {
+  background: linear-gradient(135deg, #8E7AF0, #F06292);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(142, 122, 240, 0.35);
+}
+
+/* Custom textarea */
+.trigger-custom-textarea {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* Save button */
+.trigger-save-btn {
+  background: linear-gradient(90deg, #11998e, #38ef7d);
+}
+
+/* ── Tip revealed after saving ── */
+.trigger-tip-wrap {
+  margin-top: 4px;
+}
+
+.trigger-tip {
+  background: linear-gradient(135deg, rgba(142, 122, 240, 0.12), rgba(240, 98, 146, 0.10));
+  border: 1.5px solid rgba(142, 122, 240, 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trigger-tip-label {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8E7AF0;
+}
+
+.trigger-tip-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* ── Stats section toggle ── */
+.trigger-stats-section {
+  margin-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 14px;
+}
+
+.trigger-stats-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  padding: 2px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Ranking bars ── */
+.trigger-ranking {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trigger-rank-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.trigger-rank-medal {
+  font-size: 18px;
+  text-align: center;
+}
+
+.trigger-rank-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trigger-rank-bar-wrap {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 99px;
+  overflow: hidden;
+  min-width: 60px;
+  max-width: 100px;
+}
+
+.trigger-rank-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8E7AF0, #F06292);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.trigger-rank-count {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── History toggle ── */
+.trigger-history-toggle {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  background: none;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  padding: 8px;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: center;
+}
+
+.trigger-history-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ── History list ── */
+.trigger-history {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.trigger-history-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(142, 122, 240, 0.07);
+  border: 1px solid rgba(142, 122, 240, 0.14);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.trigger-history-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.trigger-history-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.trigger-history-custom {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trigger-history-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
