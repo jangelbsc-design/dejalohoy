@@ -1,0 +1,20 @@
+{
+  "name": "Déjalo Hoy",
+  "short_name": "Déjalo Hoy",
+  "description": "Dejá de fumar y contá tus logros día a día.",
+  "lang": "es",
+  "start_url": "/dejalohoy/",
+  "scope": "/dejalohoy/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF0F5",
+  "theme_color": "#F06292",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
