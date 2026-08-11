@@ -21,6 +21,7 @@ import { useTriggersStore, TriggerEntry } from './triggersStore';
 import { useCravingsStore, CravingEntry } from './cravingsStore';
 import { useMissionsStore } from './missionsStore';
 import { useSlipsStore, SlipEntry } from './slipStore';
+import { useCheckinsStore, CheckInEntry } from './checkinStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -32,6 +33,7 @@ export interface AccountData {
   cravings?: CravingEntry[];
   missions?: Record<string, string[]>;
   slips?: SlipEntry[];
+  checkins?: Record<string, CheckInEntry>;
 }
 
 export interface LocalAccount {
@@ -82,6 +84,7 @@ function emptyData(): AccountData {
     cravings: [],
     missions: {},
     slips: [],
+    checkins: {},
   };
 }
 
@@ -126,6 +129,12 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
   }
   const slips = [...bySlipId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+  const checkins: Record<string, CheckInEntry> = {};
+  const checkinDates = new Set([...Object.keys(local.checkins || {}), ...Object.keys(cloud.checkins || {})]);
+  for (const date of checkinDates) {
+    checkins[date] = cloud.checkins?.[date] ?? local.checkins?.[date] ?? checkins[date];
+  }
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
@@ -136,6 +145,7 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     cravings,
     missions,
     slips,
+    checkins,
   };
 }
 
@@ -150,6 +160,7 @@ export function snapshotStores(): AccountData {
     cravings: useCravingsStore.getState().entries,
     missions: useMissionsStore.getState().completed,
     slips: useSlipsStore.getState().slips,
+    checkins: useCheckinsStore.getState().checkins,
   };
 }
 
@@ -162,6 +173,7 @@ export function loadIntoStores(data: AccountData) {
   useCravingsStore.setState({ entries: data.cravings || [] });
   useMissionsStore.setState({ completed: data.missions || {} });
   useSlipsStore.setState({ slips: data.slips || [] });
+  useCheckinsStore.setState({ checkins: data.checkins || {} });
 }
 
 function clearStores() {
@@ -173,6 +185,7 @@ function clearStores() {
   useCravingsStore.setState({ entries: [] });
   useMissionsStore.setState({ completed: {} });
   useSlipsStore.setState({ slips: [] });
+  useCheckinsStore.setState({ checkins: {} });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -185,6 +198,7 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   if (data.cravings && data.cravings.length > 0) return true;
   if (data.missions && Object.keys(data.missions).length > 0) return true;
   if (data.slips && data.slips.length > 0) return true;
+  if (data.checkins && Object.keys(data.checkins).length > 0) return true;
   return false;
 }
 

@@ -5,6 +5,7 @@ import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { useCravingsStore } from '../store/cravingsStore';
 import { useMissionsStore, DAILY_MISSIONS } from '../store/missionsStore';
+import { useCheckinsStore, MOOD_OPTIONS, CONFIDENCE_OPTIONS, todayKey } from '../store/checkinStore';
 import { X, Save, Trash2, Camera, XCircle, Heart } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, MissionFlagIcon, CravingBoltIcon } from '../components/CartoonIcons';
 import { 
@@ -28,6 +29,9 @@ export default function Dashboard() {
   const [showDiary, setShowDiary] = useState(false);
   const [showNoFumes, setShowNoFumes] = useState(false);
   const [diaryEntry, setDiaryEntry] = useState('');
+  const [showCheckin, setShowCheckin] = useState(false);
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [selectedConfidence, setSelectedConfidence] = useState<number | null>(null);
   const diaryEntries = useDiaryStore((state) => state.entries);
   const addDiaryEntry = useDiaryStore((state) => state.addEntry);
   const removeDiaryEntry = useDiaryStore((state) => state.removeEntry);
@@ -41,6 +45,24 @@ export default function Dashboard() {
   // Cravings / Missions state
   const cravingCount = useCravingsStore((state) => state.entries.length);
   const missionCompleted = useMissionsStore((state) => state.completed);
+
+  // Check-in state
+  const checkins = useCheckinsStore((state) => state.checkins);
+  const addCheckIn = useCheckinsStore((state) => state.addCheckIn);
+  const todayCheckin = checkins[todayKey()];
+
+  const checkinStreak = (() => {
+    let count = 0;
+    let cursor = new Date();
+    if (!checkins[todayKey(cursor)]) {
+      cursor = new Date(cursor.getTime() - 86400000);
+    }
+    while (checkins[todayKey(cursor)]) {
+      count++;
+      cursor = new Date(cursor.getTime() - 86400000);
+    }
+    return count;
+  })();
 
   const missionStreak = (() => {
     const isDayDone = (d: Date) => {
@@ -90,6 +112,15 @@ export default function Dashboard() {
     if (!text) return;
     addDiaryEntry(text);
     setDiaryEntry('');
+  };
+
+  const handleSaveCheckin = () => {
+    const mood = MOOD_OPTIONS.find((m) => m.id === selectedMood);
+    if (!mood || !selectedConfidence) return;
+    addCheckIn(mood.id, `${mood.emoji} ${mood.label}`, selectedConfidence);
+    setShowCheckin(false);
+    setSelectedMood(null);
+    setSelectedConfidence(null);
   };
 
   const formatDiaryDate = (iso: string): string => {
@@ -178,6 +209,45 @@ export default function Dashboard() {
             <span className="counter-unit-label">Segundos</span>
           </div>
         </div>
+      </div>
+
+      <div className="checkin-card" onClick={() => setShowCheckin(true)}>
+        {todayCheckin ? (
+          <>
+            <div className="checkin-card-top">
+              <span className="checkin-card-title">Check-in de hoy</span>
+              <span className="checkin-card-badge">
+                {checkinStreak > 0
+                  ? `${checkinStreak} ${checkinStreak === 1 ? 'día' : 'días'} de racha`
+                  : 'Comenzá hoy'}
+              </span>
+            </div>
+            <div className="checkin-card-body">
+              <span className="checkin-mood">{todayCheckin.moodLabel}</span>
+              <span className="checkin-conf">
+                {CONFIDENCE_OPTIONS.find((c) => c.value === todayCheckin.confidence)?.emoji ?? '⭐'} Confianza{' '}
+                {todayCheckin.confidence}/5
+              </span>
+            </div>
+            <span className="checkin-hint">Tocá para actualizar tu estado</span>
+          </>
+        ) : (
+          <>
+            <div className="checkin-card-top">
+              <span className="checkin-card-title">Check-in diario</span>
+              <span className="checkin-card-badge">
+                {checkinStreak > 0
+                  ? `${checkinStreak} ${checkinStreak === 1 ? 'día' : 'días'} de racha`
+                  : 'Nuevo'}
+              </span>
+            </div>
+            <div className="checkin-card-body">
+              <span className="checkin-prompt">¿Cómo te sentís hoy?</span>
+              <span className="checkin-cta">Hacer check-in →</span>
+            </div>
+            <span className="checkin-hint">Contá tu estado en 5 segundos y alimentá tu racha</span>
+          </>
+        )}
       </div>
 
       <div className="dash-grid">
@@ -373,6 +443,59 @@ export default function Dashboard() {
             </div>
 
             <p className="modal-quote">"Un antojo es solo un pensamiento. Tú eres más grande que tus pensamientos."</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Check-in diario */}
+      {showCheckin && (
+        <div className="modal-overlay" onClick={() => setShowCheckin(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowCheckin(false)}>
+              <X size={20} />
+            </button>
+            <h2 className="modal-title">¿Cómo te sentís hoy?</h2>
+            <p className="modal-body">
+              Tu check-in diario. Ser honesto sobre tu estado te ayuda a entender tus disparadores y a
+              sostener la racha.
+            </p>
+
+            <span className="checkin-step-label">1. Tu estado de ánimo</span>
+            <div className="checkin-moods">
+              {MOOD_OPTIONS.map((m) => (
+                <button
+                  key={m.id}
+                  className={`checkin-mood-opt${selectedMood === m.id ? ' selected' : ''}`}
+                  onClick={() => setSelectedMood(m.id)}
+                >
+                  <span className="checkin-opt-emoji">{m.emoji}</span>
+                  <span className="checkin-opt-label">{m.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <span className="checkin-step-label">2. ¿Qué tan seguro estás de no fumar hoy?</span>
+            <div className="checkin-confidences">
+              {CONFIDENCE_OPTIONS.map((c) => (
+                <button
+                  key={c.value}
+                  className={`checkin-conf-opt${selectedConfidence === c.value ? ' selected' : ''}`}
+                  onClick={() => setSelectedConfidence(c.value)}
+                >
+                  <span className="checkin-opt-emoji">{c.emoji}</span>
+                  <span className="checkin-opt-label">{c.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              className="diary-save-btn"
+              onClick={handleSaveCheckin}
+              disabled={!selectedMood || !selectedConfidence}
+            >
+              <Heart size={18} />
+              Guardar check-in
+            </button>
           </div>
         </div>
       )}

@@ -6,6 +6,7 @@ import { useTriggersStore } from '../store/triggersStore';
 import { useCravingsStore } from '../store/cravingsStore';
 import { useMissionsStore } from '../store/missionsStore';
 import { useSlipsStore } from '../store/slipStore';
+import { useCheckinsStore } from '../store/checkinStore';
 import { useAuthStore, snapshotStores } from '../store/authStore';
 import { isCloudReady, cloudSaveData } from './supabase';
 
@@ -64,6 +65,7 @@ useTriggersStore.subscribe(schedulePush);
 useCravingsStore.subscribe(schedulePush);
 useMissionsStore.subscribe(schedulePush);
 useSlipsStore.subscribe(schedulePush);
+useCheckinsStore.subscribe(schedulePush);
 
 function flushOnLeave() {
   if (timer !== null) {
