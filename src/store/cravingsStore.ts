@@ -8,13 +8,38 @@ export interface CravingEntry {
   trigger: string;         // clave normalizada del disparador, ej: "estres"
   triggerLabel: string;    // etiqueta visual, ej: "😤 Estrés"
   customText?: string;     // solo cuando trigger === "otro"
-  createdAt: string;
+  createdAt: string;       // ISO (la hora se registra automáticamente)
+  place?: string;          // etiqueta visual del lugar, ej: "🏠 Casa"
+  placeText?: string;      // texto libre cuando place === "📍 Otro lugar"
   note?: string;           // legacy: antojos viejos con texto libre
+}
+
+export const PLACE_OPTIONS = [
+  { id: 'casa', emoji: '🏠', label: 'Casa' },
+  { id: 'trabajo', emoji: '💼', label: 'Trabajo' },
+  { id: 'calle', emoji: '🚶', label: 'Calle' },
+  { id: 'auto', emoji: '🚗', label: 'Auto' },
+  { id: 'bar', emoji: '🍻', label: 'Bar o restaurante' },
+  { id: 'fiesta', emoji: '🎉', label: 'Fiesta o social' },
+  { id: 'otro', emoji: '📍', label: 'Otro lugar' },
+];
+
+export function placeLabelFor(key: string | undefined): string | undefined {
+  if (!key) return undefined;
+  const option = PLACE_OPTIONS.find((o) => o.id === key);
+  return option ? `${option.emoji} ${option.label}` : key;
 }
 
 interface CravingsState {
   entries: CravingEntry[];
-  addEntry: (intensity: number, trigger: TriggerKey, triggerLabel: string, customText?: string) => void;
+  addEntry: (
+    intensity: number,
+    trigger: TriggerKey,
+    triggerLabel: string,
+    customText?: string,
+    place?: string,
+    placeText?: string
+  ) => void;
   removeEntry: (id: string) => void;
   clearEntries: () => void;
 }
@@ -23,7 +48,7 @@ export const useCravingsStore = create<CravingsState>()(
   persist(
     (set) => ({
       entries: [],
-      addEntry: (intensity, trigger, triggerLabel, customText) =>
+      addEntry: (intensity, trigger, triggerLabel, customText, place, placeText) =>
         set((state) => ({
           entries: [
             {
@@ -33,6 +58,8 @@ export const useCravingsStore = create<CravingsState>()(
               triggerLabel,
               customText: customText?.trim() ? customText.trim() : undefined,
               createdAt: new Date().toISOString(),
+              place,
+              placeText: placeText?.trim() ? placeText.trim() : undefined,
             },
             ...state.entries,
           ],

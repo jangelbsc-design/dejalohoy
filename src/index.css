@@ -2966,6 +2966,61 @@ html {
   color: white;
 }
 
+/* Place options */
+.place-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.place-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1.5px solid rgba(0, 0, 0, 0.10);
+  border-radius: 16px;
+  padding: 10px 6px;
+  font-family: var(--font-family);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.2;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.place-option-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.place-option-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.place-option:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.place-option:active {
+  transform: scale(0.97);
+}
+
+.place-option.selected {
+  background: linear-gradient(135deg, #8E7AF0, #F06292);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(142, 122, 240, 0.35);
+}
+
+.place-option.selected .place-option-label {
+  color: white;
+}
+
 /* Custom textarea */
 .trigger-custom-textarea {
   margin-top: 4px;
@@ -3617,6 +3672,15 @@ html {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.crave-item-place {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--primary-dark);
 }
 
 .crave-item-time {

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCravingsStore } from '../store/cravingsStore';
+import { useCravingsStore, PLACE_OPTIONS, placeLabelFor } from '../store/cravingsStore';
 import { TRIGGER_OPTIONS, TRIGGER_ICONS, TriggerKey } from '../core/triggers';
-import { ArrowLeft, Plus, Trash2, Flame, Activity, TrendingUp, X, Check } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Flame, Activity, TrendingUp, X, Check, MapPin } from 'lucide-react';
 import { startOfDay, subDays, differenceInCalendarDays } from 'date-fns';
 
 const dayKey = (d: Date): string =>
@@ -23,6 +23,8 @@ export default function Cravings() {
   const [intensity, setIntensity] = useState(5);
   const [selectedTrigger, setSelectedTrigger] = useState<TriggerKey | null>(null);
   const [customText, setCustomText] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
+  const [placeText, setPlaceText] = useState('');
 
   const todayCount = entries.filter((e) => dayKey(new Date(e.createdAt)) === dayKey(new Date())).length;
   const avgIntensity = entries.length > 0
@@ -76,9 +78,19 @@ export default function Cravings() {
     const option = TRIGGER_OPTIONS.find((o) => o.key === selectedTrigger);
     if (!option) return;
     if (selectedTrigger === 'otro' && !customText.trim()) return;
-    addEntry(intensity, selectedTrigger, option.label, selectedTrigger === 'otro' ? customText : undefined);
+    const place = selectedPlace ? placeLabelFor(selectedPlace) : undefined;
+    addEntry(
+      intensity,
+      selectedTrigger,
+      option.label,
+      selectedTrigger === 'otro' ? customText : undefined,
+      place,
+      selectedPlace === 'otro' ? placeText : undefined
+    );
     setCustomText('');
     setSelectedTrigger(null);
+    setPlaceText('');
+    setSelectedPlace(null);
     setIntensity(5);
     setShowForm(false);
   };
@@ -97,7 +109,7 @@ export default function Cravings() {
       </div>
 
       <p className="crave-subtitle">
-        Registrá cada antojo con su disparador para conocer tus patrones. Un antojo observado pierde el control sobre vos.
+        Registrá cada antojo con su disparador, lugar y hora para conocer tus patrones. Un antojo observado pierde el control sobre vos.
       </p>
 
       <div className="crave-stats">
@@ -170,12 +182,36 @@ export default function Cravings() {
             />
           )}
 
+          <p className="crave-form-title crave-form-trigger-title">¿Dónde estabas?</p>
+          <div className="place-options">
+            {PLACE_OPTIONS.map((p) => (
+              <button
+                key={p.id}
+                className={`place-option${selectedPlace === p.id ? ' selected' : ''}`}
+                onClick={() => { setSelectedPlace(p.id); setPlaceText(''); }}
+              >
+                <span className="place-option-emoji">{p.emoji}</span>
+                <span className="place-option-label">{p.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {selectedPlace === 'otro' && (
+            <textarea
+              className="crave-note"
+              placeholder="¿Dónde estabas? (ej: en el auto, de visita...)"
+              value={placeText}
+              onChange={(e) => setPlaceText(e.target.value)}
+              rows={2}
+            />
+          )}
+
           <div className="crave-form-actions">
             <button className="crave-save-btn" onClick={handleSave} disabled={!canSave}>
               <Check size={16} />
               Guardar antojo
             </button>
-            <button className="crave-cancel-btn" onClick={() => { setShowForm(false); setSelectedTrigger(null); setCustomText(''); }}>
+            <button className="crave-cancel-btn" onClick={() => { setShowForm(false); setSelectedTrigger(null); setCustomText(''); setSelectedPlace(null); setPlaceText(''); }}>
               <X size={16} />
             </button>
           </div>
@@ -222,6 +258,13 @@ export default function Cravings() {
                     </span>
                     {entry.customText && <span className="crave-item-note">"{entry.customText}"</span>}
                     {!entry.triggerLabel && entry.note && <span className="crave-item-note">"{entry.note}"</span>}
+                    {entry.place && (
+                      <span className="crave-item-note crave-item-place">
+                        <MapPin size={12} />
+                        {entry.place}
+                        {entry.placeText ? ` · ${entry.placeText}` : ''}
+                      </span>
+                    )}
                     <span className="crave-item-time">
                       {new Date(entry.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                     </span>
