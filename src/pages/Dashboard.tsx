@@ -5,7 +5,7 @@ import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { useTriggersStore } from '../store/triggersStore';
 import { X, Save, Trash2, Camera, XCircle, Heart, User, Wind, UtensilsCrossed, Coffee, Beer, Hourglass, Briefcase, Eye, Activity, Moon, Smartphone, Pencil } from 'lucide-react';
-import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon } from '../components/CartoonIcons';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -251,12 +251,6 @@ export default function Dashboard() {
           <span className="dash-label">Salud Ganada</span>
           <SmilingHeartIcon size={48} />
           <span className="dash-value">{life.days > 0 ? `${life.days}d` : `${life.hours}h`}</span>
-        </div>
-
-        <div className="dash-card dash-card-clickable" onClick={() => navigate('/life')}>
-          <span className="dash-label">Vida Recuperada</span>
-          <ClockFaceIcon size={48} />
-          <span className="dash-value">{life.days > 0 ? `${life.days}d ` : ''}{life.hours}h {life.minutes}m</span>
         </div>
 
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/achievements')}>

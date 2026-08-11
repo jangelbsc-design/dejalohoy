@@ -2119,6 +2119,38 @@ html {
   font-style: italic;
 }
 
+/* Vida Recuperada modal (dentro de Salud Ganada) */
+.life-modal-content {
+  background: linear-gradient(160deg, #8E7AF0 0%, #C76EE6 50%, #FF5A85 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.life-modal-content .modal-close {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.life-modal-content .modal-title {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.life-modal-subtitle {
+  color: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+
+.life-modal-content .life-chain-wrap {
+  overflow: hidden;
+  margin: 24px 0 20px;
+}
+
+.life-modal-content .life-counter-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
 /* Achievements Page */
 .ach-page {
   padding: calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));

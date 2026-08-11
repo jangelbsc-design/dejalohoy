@@ -5,7 +5,7 @@ import { useStore } from '../store/useStore';
 import { differenceInMinutes } from 'date-fns';
 import { ArrowLeft, X, CheckCircle2, Circle, Share2, Download } from 'lucide-react';
 import html2canvas from 'html2canvas';
-import { SmilingHeartIcon, LungsIcon, DropletIcon, TasteFaceIcon, BreathingIcon, HeartbeatIcon, CleanLungsIcon, ShieldHeartIcon, BrainIcon } from '../components/CartoonIcons';
+import { SmilingHeartIcon, LungsIcon, DropletIcon, TasteFaceIcon, BreathingIcon, HeartbeatIcon, CleanLungsIcon, ShieldHeartIcon, BrainIcon, ClockFaceIcon } from '../components/CartoonIcons';
 
 interface HealthMilestone {
   id: number;
@@ -101,6 +101,8 @@ const formatElapsed = (minutes: number): string => {
   return `${m} min`;
 };
 
+const CHAIN_LINKS = Array.from({ length: 9 }, (_, i) => i);
+
 const DEPENDENCE_FULL_TIME = 525600;
 
 const DEPENDENCE_STAGES = [
@@ -157,6 +159,8 @@ export default function Health() {
   const [sharePreview, setSharePreview] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
   const [showDependence, setShowDependence] = useState(false);
+  const [showLife, setShowLife] = useState(false);
+  const [recovered, setRecovered] = useState({ years: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
   const shareCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -164,7 +168,19 @@ export default function Health() {
     const startDate = new Date(profile.startDate);
 
     const update = () => {
-      setMinutesFree(differenceInMinutes(new Date(), startDate));
+      const mins = differenceInMinutes(new Date(), startDate);
+      setMinutesFree(mins);
+
+      const recoveredSeconds = Math.max(0, (mins / 1440) * (profile.cigsPerDay ?? 0) * 660);
+      const total = Math.floor(recoveredSeconds);
+      const years = Math.floor(total / (365.25 * 86400));
+      const rem1 = total % (365.25 * 86400);
+      const days = Math.floor(rem1 / 86400);
+      const rem2 = rem1 % 86400;
+      const hours = Math.floor(rem2 / 3600);
+      const minutes = Math.floor((rem2 % 3600) / 60);
+      const seconds = rem2 % 60;
+      setRecovered({ years, days, hours, minutes, seconds });
     };
 
     update();
@@ -180,6 +196,14 @@ export default function Health() {
     (acc, stage) => (minutesFree >= stage.timeReq ? stage : acc),
     DEPENDENCE_STAGES[0]
   );
+
+  const totalRecoveredSeconds =
+    recovered.years * 365.25 * 86400 +
+    recovered.days * 86400 +
+    recovered.hours * 3600 +
+    recovered.minutes * 60 +
+    recovered.seconds;
+  const cigsRecovered = (totalRecoveredSeconds / 660).toFixed(0);
 
   const handleShare = async () => {
     if (!selected || sharing) return;
@@ -266,6 +290,24 @@ export default function Health() {
       </p>
 
       <div className="health-grid">
+        <button
+          className="health-card"
+          onClick={() => setShowLife(true)}
+        >
+          <div className="health-card-check">
+            <Circle size={16} color="#B0BEC5" />
+          </div>
+          <ClockFaceIcon size={42} />
+          <span className="health-card-title">Vida Recuperada</span>
+          <span className="health-card-time">
+            {recovered.days > 0 ? `${recovered.days}d ` : ''}{recovered.hours}h {recovered.minutes}m
+          </span>
+          <div className="health-bar-track">
+            <div className="health-bar-fill" style={{ width: '100%' }} />
+          </div>
+          <span className="health-card-percent">{cigsRecovered} cigs</span>
+        </button>
+
         {MILESTONES.map((milestone) => {
           const progress = Math.min((minutesFree / milestone.timeReq) * 100, 100);
           const isComplete = minutesFree >= milestone.timeReq;
@@ -453,6 +495,78 @@ export default function Health() {
             </div>
 
             <p className="health-modal-source">Fuente: American Cancer Society, Smokefree.gov (NCI)</p>
+          </div>
+        </div>
+      )}
+
+      {showLife && (
+        <div className="modal-overlay" onClick={() => setShowLife(false)}>
+          <div className="modal-content life-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowLife(false)}>
+              <X size={20} />
+            </button>
+            <div className="health-modal-icon">
+              <ClockFaceIcon size={56} />
+            </div>
+            <h2 className="modal-title" style={{ textAlign: 'center' }}>Vida Recuperada</h2>
+            <p className="life-modal-subtitle">
+              Cada cigarro evitado recupera ~11 minutos de vida.
+              <br />
+              Estás rompiendo la cadena de la adicción.
+            </p>
+
+            <div className="life-chain-wrap">
+              <div className="life-chain">
+                {CHAIN_LINKS.map((i) => {
+                  const isBroken = i === 3 || i === 4 || i === 5;
+                  return (
+                    <div
+                      key={i}
+                      className={`chain-link ${i % 2 === 1 ? 'chain-link-h' : ''} ${
+                        isBroken ? 'chain-link-broken' : ''
+                      }`}
+                      style={{ animationDelay: `${(i - 2) * 0.25}s` }}
+                    />
+                  );
+                })}
+              </div>
+              <div className="life-chain-sparks">
+                <span className="life-spark life-spark-1">✦</span>
+                <span className="life-spark life-spark-2">✦</span>
+                <span className="life-spark life-spark-3">✦</span>
+              </div>
+            </div>
+
+            <div className="life-counter-card">
+              <span className="life-counter-label">Tiempo de vida recuperado</span>
+              <div className="life-boxes">
+                <div className="life-box">
+                  <span className="life-box-num">{recovered.years}</span>
+                  <span className="life-box-label">años</span>
+                </div>
+                <div className="life-box">
+                  <span className="life-box-num">{recovered.days}</span>
+                  <span className="life-box-label">días</span>
+                </div>
+                <div className="life-box">
+                  <span className="life-box-num">{recovered.hours}</span>
+                  <span className="life-box-label">horas</span>
+                </div>
+                <div className="life-box">
+                  <span className="life-box-num">{recovered.minutes}</span>
+                  <span className="life-box-label">min</span>
+                </div>
+                <div className="life-box life-box-seconds">
+                  <span className="life-box-num">{recovered.seconds}</span>
+                  <span className="life-box-label">seg</span>
+                </div>
+              </div>
+              <p className="life-note">
+                Equivalente a <strong>{cigsRecovered}</strong> cigarros que nunca fumaste
+              </p>
+            </div>
+
+            <p className="life-source">Fuente: cada cigarro reduce la expectativa de vida ~11 minutos (WHO / Harvard Health)</p>
           </div>
         </div>
       )}
