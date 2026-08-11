@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Games from './pages/Games';
 import Tetris from './pages/Tetris';
 import Login from './pages/Login';
+import BottomNav from './components/BottomNav';
 
 function parseProfileFromUrl(): UserProfileData | null {
   const params = new URLSearchParams(window.location.search);
@@ -90,8 +91,10 @@ function Layout() {
     return <Navigate to="/" replace />;
   }
 
+  const showNav = location.pathname !== '/login' && location.pathname !== '/onboarding';
+
   return (
-    <div className="page-container">
+    <div className={`page-container${showNav ? ' page-container--with-nav' : ''}`}>
       <Routes>
         <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
@@ -108,6 +111,7 @@ function Layout() {
           <Route path="/games/tetris" element={<Tetris />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+        {showNav && <BottomNav />}
       </div>
   );
 }

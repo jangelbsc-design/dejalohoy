@@ -5,7 +5,7 @@ import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { useCravingsStore } from '../store/cravingsStore';
 import { useMissionsStore, DAILY_MISSIONS } from '../store/missionsStore';
-import { X, Save, Trash2, Camera, XCircle, Heart, User } from 'lucide-react';
+import { X, Save, Trash2, Camera, XCircle, Heart } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, MissionFlagIcon, CravingBoltIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -153,10 +153,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-
-      <button className="dash-profile-btn" onClick={() => navigate('/profile')} aria-label="Mi perfil">
-        <User size={20} />
-      </button>
 
       <h1 className="dash-title">Dejalo Hoy</h1>
       <p className="dash-subtitle">Cada segundo sin fumar es una victoria</p>
