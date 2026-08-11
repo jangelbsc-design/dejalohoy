@@ -3162,6 +3162,10 @@ html {
   color: var(--text);
 }
 
+.crave-form-trigger-title {
+  margin-top: 4px;
+}
+
 .crave-form-level {
   font-size: 20px;
   font-weight: 900;
@@ -3205,6 +3209,10 @@ html {
 
 .crave-save-btn {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
@@ -3214,6 +3222,11 @@ html {
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
+}
+
+.crave-save-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .crave-cancel-btn {

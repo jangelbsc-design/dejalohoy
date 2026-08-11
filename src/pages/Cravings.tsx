@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCravingsStore } from '../store/cravingsStore';
-import { ArrowLeft, Plus, Trash2, Flame, Activity, TrendingUp, X } from 'lucide-react';
+import { TRIGGER_OPTIONS, TRIGGER_ICONS, TriggerKey } from '../core/triggers';
+import { ArrowLeft, Plus, Trash2, Flame, Activity, TrendingUp, X, Check } from 'lucide-react';
 import { startOfDay, subDays, differenceInCalendarDays } from 'date-fns';
 
 const dayKey = (d: Date): string =>
@@ -20,7 +21,8 @@ export default function Cravings() {
 
   const [showForm, setShowForm] = useState(false);
   const [intensity, setIntensity] = useState(5);
-  const [note, setNote] = useState('');
+  const [selectedTrigger, setSelectedTrigger] = useState<TriggerKey | null>(null);
+  const [customText, setCustomText] = useState('');
 
   const todayCount = entries.filter((e) => dayKey(new Date(e.createdAt)) === dayKey(new Date())).length;
   const avgIntensity = entries.length > 0
@@ -67,9 +69,16 @@ export default function Cravings() {
     return groups;
   }, [entries]);
 
+  const canSave = !!selectedTrigger && (selectedTrigger !== 'otro' || !!customText.trim());
+
   const handleSave = () => {
-    addEntry(intensity, note);
-    setNote('');
+    if (!selectedTrigger) return;
+    const option = TRIGGER_OPTIONS.find((o) => o.key === selectedTrigger);
+    if (!option) return;
+    if (selectedTrigger === 'otro' && !customText.trim()) return;
+    addEntry(intensity, selectedTrigger, option.label, selectedTrigger === 'otro' ? customText : undefined);
+    setCustomText('');
+    setSelectedTrigger(null);
     setIntensity(5);
     setShowForm(false);
   };
@@ -88,7 +97,7 @@ export default function Cravings() {
       </div>
 
       <p className="crave-subtitle">
-        Registrar cada antojo te ayuda a conocer su intensidad y a saber que pasan. Nada es más fuerte que un antojo observado.
+        Registrá cada antojo con su disparador para conocer tus patrones. Un antojo observado pierde el control sobre vos.
       </p>
 
       <div className="crave-stats">
@@ -131,18 +140,42 @@ export default function Cravings() {
             <span>Moderado</span>
             <span>Muy fuerte</span>
           </div>
-          <textarea
-            className="crave-note"
-            placeholder="¿Qué lo provocó? (opcional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            rows={2}
-          />
+
+          <p className="crave-form-title crave-form-trigger-title">¿Qué disparó el antojo?</p>
+          <div className="trigger-options">
+            {TRIGGER_OPTIONS.map((opt) => {
+              const Icon = TRIGGER_ICONS[opt.key];
+              const isSelected = selectedTrigger === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  className={`trigger-option-card${isSelected ? ' selected' : ''}`}
+                  onClick={() => { setSelectedTrigger(opt.key); setCustomText(''); }}
+                >
+                  <Icon size={24} color={isSelected ? '#fff' : '#8E7AF0'} />
+                  <span>{opt.label.replace(/^\S+\s/, '')}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedTrigger === 'otro' && (
+            <textarea
+              className="crave-note"
+              placeholder="Describí qué pasó justo antes del impulso..."
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+              rows={3}
+              autoFocus
+            />
+          )}
+
           <div className="crave-form-actions">
-            <button className="crave-save-btn" onClick={handleSave}>
+            <button className="crave-save-btn" onClick={handleSave} disabled={!canSave}>
+              <Check size={16} />
               Guardar antojo
             </button>
-            <button className="crave-cancel-btn" onClick={() => setShowForm(false)}>
+            <button className="crave-cancel-btn" onClick={() => { setShowForm(false); setSelectedTrigger(null); setCustomText(''); }}>
               <X size={16} />
             </button>
           </div>
@@ -184,9 +217,11 @@ export default function Cravings() {
                   />
                   <div className="crave-item-info">
                     <span className="crave-item-level">
-                      Intensidad {entry.intensity}/10
+                      {entry.triggerLabel || `Intensidad ${entry.intensity}/10`}
+                      {entry.triggerLabel ? ` · ${entry.intensity}/10` : ''}
                     </span>
-                    {entry.note && <span className="crave-item-note">"{entry.note}"</span>}
+                    {entry.customText && <span className="crave-item-note">"{entry.customText}"</span>}
+                    {!entry.triggerLabel && entry.note && <span className="crave-item-note">"{entry.note}"</span>}
                     <span className="crave-item-time">
                       {new Date(entry.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -207,7 +242,7 @@ export default function Cravings() {
 
       {entries.length === 0 && (
         <p className="crave-empty">
-          Aún no registraste antojos. Cada uno que anotes es un antojo que no te controló. 💪
+          Aún no registraste antojos. Cada uno que anotes con su disparador es un antojo que no te controló. 💪
         </p>
       )}
     </div>
