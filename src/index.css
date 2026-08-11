@@ -311,6 +311,72 @@ html {
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
 }
 
+/* Anillos de progreso */
+.rings-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  padding: 16px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 32px rgba(216, 27, 96, 0.08);
+}
+
+.rings-card-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.rings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ring {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+.ring-clickable:active {
+  transform: scale(0.96);
+}
+
+.ring-emoji {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.ring-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.ring-sublabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
 .checkin-card-top {
   display: flex;
   justify-content: space-between;

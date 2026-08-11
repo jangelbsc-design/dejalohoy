@@ -8,6 +8,7 @@ import { useMissionsStore, DAILY_MISSIONS } from '../store/missionsStore';
 import { useCheckinsStore, MOOD_OPTIONS, CONFIDENCE_OPTIONS, todayKey } from '../store/checkinStore';
 import { X, Save, Trash2, Camera, XCircle, Heart } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, MissionFlagIcon, CravingBoltIcon } from '../components/CartoonIcons';
+import { ProgressRing } from '../components/ProgressRing';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -80,6 +81,13 @@ export default function Dashboard() {
     }
     return count;
   })();
+
+  const todayMissionsDone = (missionCompleted[dayKey(new Date())] || []).length;
+  const missionProgress = DAILY_MISSIONS.length > 0 ? todayMissionsDone / DAILY_MISSIONS.length : 0;
+  const todayConfidence = todayCheckin?.confidence ?? 0;
+  const todayConfidenceEmoji = todayCheckin
+    ? CONFIDENCE_OPTIONS.find((c) => c.value === todayCheckin.confidence)?.emoji ?? '⭐'
+    : '⭐';
 
   const [time, setTime] = useState<FreeTime>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [money, setMoney] = useState(0);
@@ -248,6 +256,39 @@ export default function Dashboard() {
             <span className="checkin-hint">Contá tu estado en 5 segundos y alimentá tu racha</span>
           </>
         )}
+      </div>
+
+      <div className="rings-card">
+        <span className="rings-card-title">Progreso de hoy</span>
+        <div className="rings-grid">
+          <ProgressRing
+            progress={missionProgress}
+            from="#43e97b"
+            to="#38f9d7"
+            emoji="🎯"
+            label="Misiones"
+            sublabel={`${todayMissionsDone}/${DAILY_MISSIONS.length}`}
+            onClick={() => navigate('/missions')}
+          />
+          <ProgressRing
+            progress={todayCheckin ? 1 : 0}
+            from="#F06292"
+            to="#8E7AF0"
+            emoji="💖"
+            label="Check-in"
+            sublabel={todayCheckin ? 'Listo' : 'Pendiente'}
+            onClick={() => setShowCheckin(true)}
+          />
+          <ProgressRing
+            progress={todayConfidence / 5}
+            from="#8E7AF0"
+            to="#C76EE6"
+            emoji={todayConfidenceEmoji}
+            label="Confianza"
+            sublabel={todayCheckin ? `${todayConfidence}/5` : 'Pendiente'}
+            onClick={() => setShowCheckin(true)}
+          />
+        </div>
       </div>
 
       <div className="dash-grid">
