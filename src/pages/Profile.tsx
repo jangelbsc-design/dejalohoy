@@ -2,7 +2,33 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useStore } from '../store/useStore';
-import { ArrowLeft, KeyRound, User, Cigarette, LogOut } from 'lucide-react';
+import { useRemindersStore, DAY_LABELS, formatReminderTime } from '../store/remindersStore';
+import { requestNotificationPermission } from '../components/ReminderScheduler';
+import {
+  ArrowLeft,
+  Bell,
+  BellRing,
+  Cigarette,
+  KeyRound,
+  LogOut,
+  Pencil,
+  Plus,
+  Trash2,
+  User,
+} from 'lucide-react';
+
+const REMINDER_EMOJIS = ['🌅', '🧘', '🌙', '☀️', '💪', '🍎', '💧', '😴', '🎯', '🔔'];
+const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
+
+function toggleDay(days: number[], day: number): number[] {
+  return days.includes(day) ? days.filter((d) => d !== day) : [...days, day].sort();
+}
+
+function daysSummary(days: number[]): string {
+  if (days.length === 7) return 'Todos los días';
+  if (days.length === 0) return 'Sin días';
+  return days.map((d) => DAY_LABELS[d]).join(' ');
+}
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -10,6 +36,11 @@ export default function Profile() {
   const changePassword = useAuthStore((state) => state.changePassword);
   const profile = useStore((state) => state.profile);
   const setProfile = useStore((state) => state.setProfile);
+
+  const reminders = useRemindersStore((state) => state.reminders);
+  const addReminder = useRemindersStore((state) => state.addReminder);
+  const updateReminder = useRemindersStore((state) => state.updateReminder);
+  const removeReminder = useRemindersStore((state) => state.removeReminder);
 
   const handleLogout = () => {
     useAuthStore.getState().logout();
@@ -30,6 +61,19 @@ export default function Profile() {
   const [pricePerPack, setPricePerPack] = useState(String(profile?.pricePerPack ?? 0));
   const [yearsSmoking, setYearsSmoking] = useState(String(profile?.yearsSmoking ?? 0));
   const [dataMessage, setDataMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const [notifState, setNotifState] = useState(() =>
+    'Notification' in window ? Notification.permission : 'unsupported'
+  );
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTime, setEditTime] = useState('');
+  const [editDays, setEditDays] = useState<number[]>(ALL_DAYS);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newEmoji, setNewEmoji] = useState('🔔');
+  const [newLabel, setNewLabel] = useState('');
+  const [newBody, setNewBody] = useState('');
+  const [newTime, setNewTime] = useState('12:00');
+  const [newDays, setNewDays] = useState<number[]>(ALL_DAYS);
 
   const perPack = Math.max(1, parseFloat(cigsPerPack) || 1);
   const packs = parseFloat(packsPerDay) || 0;
@@ -65,6 +109,31 @@ export default function Profile() {
       setNewPassword('');
       setConfirmPassword('');
     }
+  };
+
+  const handleEnableNotifications = async () => {
+    setNotifState(await requestNotificationPermission());
+  };
+
+  const handleAdd = () => {
+    if (!newLabel.trim() || !newTime) return;
+    addReminder({
+      emoji: newEmoji,
+      label: newLabel.trim(),
+      body: newBody.trim() || 'Es hora de cuidarte. 🚭',
+      time: newTime,
+      days: newDays,
+      enabled: true,
+    });
+    setShowAdd(false);
+    setNewLabel('');
+    setNewBody('');
+  };
+
+  const handleSaveEdit = (id: string) => {
+    if (!editTime) return;
+    updateReminder(id, { time: editTime, days: editDays });
+    setEditingId(null);
   };
 
   return (
@@ -164,6 +233,161 @@ export default function Profile() {
           disabled={!profile || perPack <= 0}
         >
           Guardar mis datos
+        </button>
+      </div>
+
+      <div className="profile-card">
+        <h2 className="profile-card-title">
+          <BellRing size={18} />
+          Recordatorios
+        </h2>
+        <p className="profile-card-subtitle">
+          Recibí mensajes a lo largo del día para no perder el rumbo. Se muestran mientras la app está abierta.
+        </p>
+
+        {notifState !== 'granted' && notifState !== 'unsupported' && (
+          <button className="reminder-enable-btn" onClick={handleEnableNotifications}>
+            <Bell size={16} />
+            {notifState === 'denied' ? 'Notificaciones bloqueadas en el navegador' : 'Activar notificaciones del navegador'}
+          </button>
+        )}
+        {notifState === 'granted' && (
+          <p className="reminder-perm-ok">Notificaciones del navegador activadas.</p>
+        )}
+
+        {reminders.map((r) => (
+          <div key={r.id} className={`reminder-item${r.enabled ? '' : ' reminder-item-off'}`}>
+            <div className="reminder-item-top">
+              <span className="reminder-item-emoji">{r.emoji}</span>
+              <div className="reminder-item-info">
+                <strong className="reminder-item-label">{r.label}</strong>
+                <span className="reminder-item-meta">
+                  {formatReminderTime(r.time)} · {daysSummary(r.days)}
+                </span>
+              </div>
+              <label className="reminder-switch">
+                <input
+                  type="checkbox"
+                  checked={r.enabled}
+                  onChange={() => updateReminder(r.id, { enabled: !r.enabled })}
+                />
+                <span className="reminder-switch-track" />
+              </label>
+            </div>
+            {editingId === r.id ? (
+              <div className="reminder-edit">
+                <div className="reminder-edit-row">
+                  <label>Hora</label>
+                  <input type="time" value={editTime} onChange={(e) => setEditTime(e.target.value)} />
+                </div>
+                <div className="reminder-days">
+                  {ALL_DAYS.map((d) => (
+                    <button
+                      key={d}
+                      className={`reminder-day-chip${editDays.includes(d) ? ' reminder-day-chip-on' : ''}`}
+                      onClick={() => setEditDays(toggleDay(editDays, d))}
+                    >
+                      {DAY_LABELS[d]}
+                    </button>
+                  ))}
+                </div>
+                <div className="reminder-edit-actions">
+                  <button className="btn-primary reminder-save-btn" onClick={() => handleSaveEdit(r.id)}>
+                    Guardar
+                  </button>
+                  <button className="reminder-cancel-btn" onClick={() => setEditingId(null)}>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="reminder-item-actions">
+                <button
+                  className="reminder-icon-btn"
+                  onClick={() => {
+                    setEditingId(r.id);
+                    setEditTime(r.time);
+                    setEditDays(r.days);
+                    setShowAdd(false);
+                  }}
+                  aria-label="Editar recordatorio"
+                >
+                  <Pencil size={16} />
+                </button>
+                <button
+                  className="reminder-icon-btn reminder-icon-btn-danger"
+                  onClick={() => removeReminder(r.id)}
+                  aria-label="Eliminar recordatorio"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {showAdd && (
+          <div className="reminder-add">
+            <div className="reminder-add-emoji">
+              {REMINDER_EMOJIS.map((e) => (
+                <button
+                  key={e}
+                  className={`reminder-emoji-option${newEmoji === e ? ' reminder-emoji-option-on' : ''}`}
+                  onClick={() => setNewEmoji(e)}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+            <div className="input-group">
+              <label>Título</label>
+              <input
+                value={newLabel}
+                onChange={(e) => setNewLabel(e.target.value)}
+                placeholder="Ej: Pausa para respirar"
+              />
+            </div>
+            <div className="input-group">
+              <label>Mensaje</label>
+              <input
+                value={newBody}
+                onChange={(e) => setNewBody(e.target.value)}
+                placeholder="Ej: Tomate 10 respiraciones profundas"
+              />
+            </div>
+            <div className="input-group">
+              <label>Hora</label>
+              <input type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+            </div>
+            <div className="reminder-days">
+              {ALL_DAYS.map((d) => (
+                <button
+                  key={d}
+                  className={`reminder-day-chip${newDays.includes(d) ? ' reminder-day-chip-on' : ''}`}
+                  onClick={() => setNewDays(toggleDay(newDays, d))}
+                >
+                  {DAY_LABELS[d]}
+                </button>
+              ))}
+            </div>
+            <div className="reminder-edit-actions">
+              <button
+                className="btn-primary reminder-save-btn"
+                onClick={handleAdd}
+                disabled={!newLabel.trim() || !newTime}
+              >
+                Agregar recordatorio
+              </button>
+              <button className="reminder-cancel-btn" onClick={() => setShowAdd(false)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+
+        <button className="goal-add-btn" onClick={() => { setShowAdd((v) => !v); setEditingId(null); }}>
+          <Plus size={18} />
+          Nuevo recordatorio
         </button>
       </div>
 

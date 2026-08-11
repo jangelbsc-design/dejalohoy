@@ -18,6 +18,7 @@ import Games from './pages/Games';
 import Tetris from './pages/Tetris';
 import Login from './pages/Login';
 import BottomNav from './components/BottomNav';
+import { ReminderScheduler } from './components/ReminderScheduler';
 
 function parseProfileFromUrl(): UserProfileData | null {
   const params = new URLSearchParams(window.location.search);
@@ -112,6 +113,7 @@ function Layout() {
           <Route path="/profile" element={<Profile />} />
         </Routes>
         {showNav && <BottomNav />}
+        <ReminderScheduler />
       </div>
   );
 }

@@ -22,6 +22,7 @@ import { useCravingsStore, CravingEntry } from './cravingsStore';
 import { useMissionsStore } from './missionsStore';
 import { useSlipsStore, SlipEntry } from './slipStore';
 import { useCheckinsStore, CheckInEntry } from './checkinStore';
+import { useRemindersStore, Reminder, DEFAULT_REMINDERS } from './remindersStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -34,6 +35,7 @@ export interface AccountData {
   missions?: Record<string, string[]>;
   slips?: SlipEntry[];
   checkins?: Record<string, CheckInEntry>;
+  reminders?: Reminder[];
 }
 
 export interface LocalAccount {
@@ -85,6 +87,7 @@ function emptyData(): AccountData {
     missions: {},
     slips: [],
     checkins: {},
+    reminders: [],
   };
 }
 
@@ -135,6 +138,8 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     checkins[date] = cloud.checkins?.[date] ?? local.checkins?.[date] ?? checkins[date];
   }
 
+  const reminders = cloud.reminders && cloud.reminders.length > 0 ? cloud.reminders : local.reminders || [];
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
@@ -146,6 +151,7 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     missions,
     slips,
     checkins,
+    reminders,
   };
 }
 
@@ -161,6 +167,7 @@ export function snapshotStores(): AccountData {
     missions: useMissionsStore.getState().completed,
     slips: useSlipsStore.getState().slips,
     checkins: useCheckinsStore.getState().checkins,
+    reminders: useRemindersStore.getState().reminders,
   };
 }
 
@@ -174,6 +181,9 @@ export function loadIntoStores(data: AccountData) {
   useMissionsStore.setState({ completed: data.missions || {} });
   useSlipsStore.setState({ slips: data.slips || [] });
   useCheckinsStore.setState({ checkins: data.checkins || {} });
+  useRemindersStore.setState({
+    reminders: data.reminders && data.reminders.length > 0 ? data.reminders : useRemindersStore.getState().reminders,
+  });
 }
 
 function clearStores() {
@@ -186,6 +196,7 @@ function clearStores() {
   useMissionsStore.setState({ completed: {} });
   useSlipsStore.setState({ slips: [] });
   useCheckinsStore.setState({ checkins: {} });
+  useRemindersStore.setState({ reminders: DEFAULT_REMINDERS });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -466,3 +477,4 @@ useDiaryStore.subscribe(syncAccount);
 useWishlistStore.subscribe(syncAccount);
 useMotivationStore.subscribe(syncAccount);
 useTriggersStore.subscribe(syncAccount);
+useRemindersStore.subscribe(syncAccount);
