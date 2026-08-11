@@ -3624,3 +3624,222 @@ html {
 .miss-reward p {
   flex: 1;
 }
+
+/* ── Guía: Historial de caídas ── */
+.guide-section-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.slip-history {
+  margin-top: 28px;
+}
+
+.slip-empty {
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 16px;
+  padding: 20px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.slip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--card-shadow);
+}
+
+.slip-item-emoji {
+  font-size: 22px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.slip-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.slip-item-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.slip-item-custom {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slip-item-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── Guía: Modal de caída sin culpa ── */
+.slip-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.slip-modal-emoji {
+  font-size: 34px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.slip-modal-title {
+  margin-top: 0;
+}
+
+.slip-modal-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.slip-cigs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 16px 0 4px;
+}
+
+.slip-cigs-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.slip-cigs-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slip-cigs-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.slip-cigs-btn:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.slip-cigs-value {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  min-width: 28px;
+  text-align: center;
+}
+
+.slip-save-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 14px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.slip-save-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.slip-restart-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.slip-restart-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.slip-saved {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.slip-saved-emoji {
+  font-size: 44px;
+  line-height: 1.2;
+}
+
+.slip-saved .modal-body {
+  margin: 0;
+}
+
+.slip-done-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: #0b3d2e;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 10px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}

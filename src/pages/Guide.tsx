@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { AlertTriangle, Frown, X, ChevronLeft, MessageCircle, BookOpen } from 'lucide-react';
+import { useSlipsStore } from '../store/slipStore';
+import { TRIGGER_OPTIONS, TRIGGER_ICONS, TriggerKey } from '../core/triggers';
+import { AlertTriangle, Frown, X, ChevronLeft, MessageCircle, BookOpen, Minus, Plus, Trash2, Check } from 'lucide-react';
 
 interface Technique {
   id: string;
@@ -46,16 +48,60 @@ const TECHNIQUES: Technique[] = [
 
 export default function Guide() {
   const navigate = useNavigate();
-  const resetProfile = useStore((state) => state.resetProfile);
+  const restartCounter = useStore((state) => state.restartCounter);
+  const { slips, addSlip, removeSlip } = useSlipsStore();
   const [showAnxiety, setShowAnxiety] = useState(false);
   const [showAssistant, setShowAssistant] = useState(false);
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]>('Todas');
 
-  const handleCai = () => {
-    const confirmed = window.confirm('¿Has fumado? Esto reiniciará todo tu progreso. ¿Estás seguro?');
-    if (confirmed) {
-      resetProfile();
-    }
+  // Estado del registro de caída
+  const [showSlip, setShowSlip] = useState(false);
+  const [slipTrigger, setSlipTrigger] = useState<TriggerKey | null>(null);
+  const [slipCustom, setSlipCustom] = useState('');
+  const [slipCigarettes, setSlipCigarettes] = useState(0);
+  const [slipSaved, setSlipSaved] = useState(false);
+  const [slipRestarted, setSlipRestarted] = useState(false);
+
+  const openSlip = () => {
+    setSlipTrigger(null);
+    setSlipCustom('');
+    setSlipCigarettes(0);
+    setSlipSaved(false);
+    setSlipRestarted(false);
+    setShowSlip(true);
+  };
+
+  const closeSlip = () => {
+    setShowSlip(false);
+    setSlipTrigger(null);
+    setSlipCustom('');
+    setSlipCigarettes(0);
+    setSlipSaved(false);
+    setSlipRestarted(false);
+  };
+
+  const handleSaveSlip = (restart: boolean) => {
+    if (!slipTrigger) return;
+    const option = TRIGGER_OPTIONS.find((o) => o.key === slipTrigger);
+    if (!option) return;
+    if (slipTrigger === 'otro' && !slipCustom.trim()) return;
+    addSlip(
+      slipTrigger,
+      option.label,
+      slipTrigger === 'otro' ? slipCustom : undefined,
+      slipCigarettes
+    );
+    if (restart) restartCounter();
+    setSlipRestarted(restart);
+    setSlipSaved(true);
+  };
+
+  const formatSlipDate = (iso: string): string => {
+    const date = new Date(iso);
+    const days = Math.floor((Date.now() - date.getTime()) / 86400000);
+    if (days === 0) return `Hoy · ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+    if (days === 1) return `Ayer · ${date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   const visible = TECHNIQUES.filter((t) => category === 'Todas' || t.category === category);
@@ -74,7 +120,7 @@ export default function Guide() {
       </p>
 
       <div className="guide-actions">
-        <button className="btn-cai" onClick={handleCai}>
+        <button className="btn-cai" onClick={openSlip}>
           <AlertTriangle size={24} />
           ¡Caí!
         </button>
@@ -125,6 +171,141 @@ export default function Guide() {
         </div>
       </div>
 
+      <div className="slip-history">
+        <h3 className="guide-section-title">Historial de caídas</h3>
+        {slips.length === 0 ? (
+          <p className="slip-empty">
+            Sin caídas registradas. Si tropezás, anotalo sin culpa: cada caída te enseña tu patrón para la próxima.
+          </p>
+        ) : (
+          slips.map((slip) => (
+            <div key={slip.id} className="slip-item">
+              <span className="slip-item-emoji">💪</span>
+              <div className="slip-item-info">
+                <span className="slip-item-label">{slip.triggerLabel}</span>
+                {slip.customText && <span className="slip-item-custom">"{slip.customText}"</span>}
+                <span className="slip-item-meta">
+                  {slip.cigarettes > 0 ? `${slip.cigarettes} cig. · ` : ''}
+                  {formatSlipDate(slip.createdAt)}
+                </span>
+              </div>
+              <button
+                className="diary-entry-delete"
+                onClick={() => removeSlip(slip.id)}
+                aria-label="Eliminar"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Modal de caída sin culpa */}
+      {showSlip && (
+        <div className="modal-overlay" onClick={closeSlip}>
+          <div className="modal-content slip-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeSlip}>
+              <X size={20} />
+            </button>
+
+            {!slipSaved ? (
+              <>
+                <div className="slip-modal-header">
+                  <span className="slip-modal-emoji">💪</span>
+                  <div>
+                    <h2 className="modal-title slip-modal-title">Un tropezón no es el fin</h2>
+                    <p className="slip-modal-subtitle">
+                      Anotalo sin culpa para entender tu patrón. Toda la evidencia dice que recuperarse de una caída es parte del camino.
+                    </p>
+                  </div>
+                </div>
+
+                <p className="modal-body">¿Qué disparó la caída?</p>
+                <div className="trigger-options">
+                  {TRIGGER_OPTIONS.map((opt) => {
+                    const Icon = TRIGGER_ICONS[opt.key];
+                    const isSelected = slipTrigger === opt.key;
+                    return (
+                      <button
+                        key={opt.key}
+                        className={`trigger-option-card${isSelected ? ' selected' : ''}`}
+                        onClick={() => { setSlipTrigger(opt.key); setSlipCustom(''); }}
+                      >
+                        <Icon size={24} color={isSelected ? '#fff' : '#8E7AF0'} />
+                        <span>{opt.label.replace(/^\S+\s/, '')}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {slipTrigger === 'otro' && (
+                  <textarea
+                    className="diary-textarea trigger-custom-textarea"
+                    placeholder="Describí qué pasó..."
+                    value={slipCustom}
+                    onChange={(e) => setSlipCustom(e.target.value)}
+                    rows={3}
+                    autoFocus
+                  />
+                )}
+
+                <div className="slip-cigs">
+                  <span className="slip-cigs-label">¿Cuántos cigarros fumaste?</span>
+                  <div className="slip-cigs-stepper">
+                    <button
+                      className="slip-cigs-btn"
+                      onClick={() => setSlipCigarettes(Math.max(0, slipCigarettes - 1))}
+                      aria-label="Menos"
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="slip-cigs-value">{slipCigarettes}</span>
+                    <button
+                      className="slip-cigs-btn"
+                      onClick={() => setSlipCigarettes(slipCigarettes + 1)}
+                      aria-label="Más"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  className="slip-save-btn"
+                  onClick={() => handleSaveSlip(false)}
+                  disabled={!slipTrigger || (slipTrigger === 'otro' && !slipCustom.trim())}
+                >
+                  <Check size={18} />
+                  Guardar y seguir
+                </button>
+                <button
+                  className="slip-restart-btn"
+                  onClick={() => handleSaveSlip(true)}
+                  disabled={!slipTrigger || (slipTrigger === 'otro' && !slipCustom.trim())}
+                >
+                  Reiniciar contador desde ahora
+                </button>
+              </>
+            ) : (
+              <div className="slip-saved">
+                <span className="slip-saved-emoji">🌱</span>
+                <h2 className="modal-title">Queda anotado</h2>
+                <p className="modal-body">
+                  {slipRestarted
+                    ? 'Reiniciamos tu contador desde ahora. Esto NO borra tus logros, medallas, diario ni metas: todo tu historial sigue intacto. Hoy empieza una nueva racha.'
+                    : 'Tu contador sigue corriendo y vos también. Un tropiezo no borra tu progreso: ya ganaste días enteros que nadie te quita. Volvé a la Biblioteca y elegí una técnica para la próxima.'}
+                </p>
+                <button className="slip-done-btn" onClick={closeSlip}>
+                  <Check size={18} />
+                  Listo
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {showAnxiety && (
         <div className="modal-overlay" onClick={() => setShowAnxiety(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -157,7 +338,7 @@ export default function Guide() {
             <ul className="modal-list">
               <li><strong>Reconócelo como un tropiezo, no una derrota.</strong> No dejes que un cigarro arruine todo tu progreso. Lo importante es seguir adelante.</li>
               <li><strong>Identifica el desencadenante.</strong> ¿Estrés? ¿Alcohol? ¿Ansiedad? Saber qué lo causó te ayudará a prepararte para la próxima vez.</li>
-              <li><strong>Reinicia ahora mismo.</strong> Presiona "¡Caí!" para reiniciar el contador y vuelve a empezar. Cada minuto sin fumar cuenta.</li>
+              <li><strong>Reinicia ahora mismo.</strong> Presiona "¡Caí!" para registrar el tropezón y volver a empezar. Cada minuto sin fumar cuenta.</li>
               <li><strong>Bebe agua y respira profundo.</strong> Toma un vaso de agua y haz 10 respiraciones lentas para calmar la ansiedad.</li>
               <li><strong>Busca apoyo.</strong> Habla con alguien de confianza. Compartir lo que sientes reduce la carga y te fortalece.</li>
               <li><strong>Retoma tu plan.</strong> Revisa por qué decidiste dejar de fumar. Tus razones siguen siendo válidas.</li>

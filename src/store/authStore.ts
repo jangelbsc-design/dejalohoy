@@ -20,6 +20,7 @@ import { supabase } from '../core/supabaseClient';
 import { useTriggersStore, TriggerEntry } from './triggersStore';
 import { useCravingsStore, CravingEntry } from './cravingsStore';
 import { useMissionsStore } from './missionsStore';
+import { useSlipsStore, SlipEntry } from './slipStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -30,6 +31,7 @@ export interface AccountData {
   triggers?: TriggerEntry[];
   cravings?: CravingEntry[];
   missions?: Record<string, string[]>;
+  slips?: SlipEntry[];
 }
 
 export interface LocalAccount {
@@ -79,6 +81,7 @@ function emptyData(): AccountData {
     triggers: [],
     cravings: [],
     missions: {},
+    slips: [],
   };
 }
 
@@ -115,6 +118,14 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     missions[date] = [...new Set([...(local.missions?.[date] || []), ...(cloud.missions?.[date] || [])])];
   }
 
+  const bySlipId = new Map<string, SlipEntry>();
+  const localSlips = local.slips || [];
+  const cloudSlips = cloud.slips || [];
+  for (const entry of [...localSlips, ...cloudSlips]) {
+    bySlipId.set(entry.id, entry);
+  }
+  const slips = [...bySlipId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
@@ -124,6 +135,7 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     triggers,
     cravings,
     missions,
+    slips,
   };
 }
 
@@ -137,6 +149,7 @@ export function snapshotStores(): AccountData {
     triggers: useTriggersStore.getState().entries,
     cravings: useCravingsStore.getState().entries,
     missions: useMissionsStore.getState().completed,
+    slips: useSlipsStore.getState().slips,
   };
 }
 
@@ -148,6 +161,7 @@ export function loadIntoStores(data: AccountData) {
   useTriggersStore.setState({ entries: data.triggers || [] });
   useCravingsStore.setState({ entries: data.cravings || [] });
   useMissionsStore.setState({ completed: data.missions || {} });
+  useSlipsStore.setState({ slips: data.slips || [] });
 }
 
 function clearStores() {
@@ -158,6 +172,7 @@ function clearStores() {
   useTriggersStore.setState({ entries: [] });
   useCravingsStore.setState({ entries: [] });
   useMissionsStore.setState({ completed: {} });
+  useSlipsStore.setState({ slips: [] });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -169,6 +184,7 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   if (data.triggers && data.triggers.length > 0) return true;
   if (data.cravings && data.cravings.length > 0) return true;
   if (data.missions && Object.keys(data.missions).length > 0) return true;
+  if (data.slips && data.slips.length > 0) return true;
   return false;
 }
 

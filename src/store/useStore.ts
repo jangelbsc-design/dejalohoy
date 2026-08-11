@@ -13,6 +13,7 @@ interface AppState {
   profile: UserProfileData | null;
   setProfile: (profile: UserProfileData) => void;
   resetProfile: () => void;
+  restartCounter: () => void;
 }
 
 export const useStore = create<AppState>()(
@@ -21,6 +22,12 @@ export const useStore = create<AppState>()(
       profile: null,
       setProfile: (profile) => set({ profile }),
       resetProfile: () => set({ profile: null }),
+      restartCounter: () =>
+        set((state) =>
+          state.profile
+            ? { profile: { ...state.profile, startDate: new Date().toISOString() } }
+            : {}
+        ),
     }),
     {
       name: 'dejalohoy-storage', // se guarda automáticamente en localStorage
