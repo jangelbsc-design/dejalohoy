@@ -13,6 +13,7 @@ import Wishlist from './pages/Wishlist';
 import Medals from './pages/Medals';
 import Cravings from './pages/Cravings';
 import Missions from './pages/Missions';
+import Community from './pages/Community';
 import Profile from './pages/Profile';
 import Games from './pages/Games';
 import Tetris from './pages/Tetris';
@@ -108,6 +109,7 @@ function Layout() {
           <Route path="/health" element={<Health />} />
           <Route path="/life" element={<LifeRecovered />} />
           <Route path="/achievements" element={<Achievements />} />
+          <Route path="/community" element={<Community />} />
           <Route path="/games" element={<Games />} />
           <Route path="/games/tetris" element={<Tetris />} />
           <Route path="/profile" element={<Profile />} />

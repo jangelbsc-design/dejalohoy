@@ -23,6 +23,7 @@ import { useMissionsStore } from './missionsStore';
 import { useSlipsStore, SlipEntry } from './slipStore';
 import { useCheckinsStore, CheckInEntry } from './checkinStore';
 import { useRemindersStore, Reminder, DEFAULT_REMINDERS } from './remindersStore';
+import { useCommunityStore, CommunityQuote } from './communityStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -36,6 +37,7 @@ export interface AccountData {
   slips?: SlipEntry[];
   checkins?: Record<string, CheckInEntry>;
   reminders?: Reminder[];
+  communityQuotes?: CommunityQuote[];
 }
 
 export interface LocalAccount {
@@ -88,6 +90,7 @@ function emptyData(): AccountData {
     slips: [],
     checkins: {},
     reminders: [],
+    communityQuotes: [],
   };
 }
 
@@ -140,6 +143,14 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
 
   const reminders = cloud.reminders && cloud.reminders.length > 0 ? cloud.reminders : local.reminders || [];
 
+  const byQuoteId = new Map<string, CommunityQuote>();
+  const localQuotes = local.communityQuotes || [];
+  const cloudQuotes = cloud.communityQuotes || [];
+  for (const quote of [...localQuotes, ...cloudQuotes]) {
+    byQuoteId.set(quote.id, quote);
+  }
+  const communityQuotes = [...byQuoteId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
@@ -152,6 +163,7 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     slips,
     checkins,
     reminders,
+    communityQuotes,
   };
 }
 
@@ -168,6 +180,7 @@ export function snapshotStores(): AccountData {
     slips: useSlipsStore.getState().slips,
     checkins: useCheckinsStore.getState().checkins,
     reminders: useRemindersStore.getState().reminders,
+    communityQuotes: useCommunityStore.getState().myQuotes,
   };
 }
 
@@ -184,6 +197,7 @@ export function loadIntoStores(data: AccountData) {
   useRemindersStore.setState({
     reminders: data.reminders && data.reminders.length > 0 ? data.reminders : useRemindersStore.getState().reminders,
   });
+  useCommunityStore.setState({ myQuotes: data.communityQuotes || [] });
 }
 
 function clearStores() {
@@ -197,6 +211,7 @@ function clearStores() {
   useSlipsStore.setState({ slips: [] });
   useCheckinsStore.setState({ checkins: {} });
   useRemindersStore.setState({ reminders: DEFAULT_REMINDERS });
+  useCommunityStore.setState({ myQuotes: [] });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -210,6 +225,7 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   if (data.missions && Object.keys(data.missions).length > 0) return true;
   if (data.slips && data.slips.length > 0) return true;
   if (data.checkins && Object.keys(data.checkins).length > 0) return true;
+  if (data.communityQuotes && data.communityQuotes.length > 0) return true;
   return false;
 }
 
@@ -478,3 +494,4 @@ useWishlistStore.subscribe(syncAccount);
 useMotivationStore.subscribe(syncAccount);
 useTriggersStore.subscribe(syncAccount);
 useRemindersStore.subscribe(syncAccount);
+useCommunityStore.subscribe(syncAccount);

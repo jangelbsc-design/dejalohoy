@@ -8,6 +8,7 @@ import { useMissionsStore } from '../store/missionsStore';
 import { useSlipsStore } from '../store/slipStore';
 import { useCheckinsStore } from '../store/checkinStore';
 import { useRemindersStore } from '../store/remindersStore';
+import { useCommunityStore } from '../store/communityStore';
 import { useAuthStore, snapshotStores } from '../store/authStore';
 import { isCloudReady, cloudSaveData } from './supabase';
 
@@ -68,6 +69,7 @@ useMissionsStore.subscribe(schedulePush);
 useSlipsStore.subscribe(schedulePush);
 useCheckinsStore.subscribe(schedulePush);
 useRemindersStore.subscribe(schedulePush);
+useCommunityStore.subscribe(schedulePush);
 
 function flushOnLeave() {
   if (timer !== null) {
