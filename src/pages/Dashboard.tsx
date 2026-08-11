@@ -222,12 +222,6 @@ export default function Dashboard() {
       </div>
 
       <div className="dash-grid">
-        <div className="dash-card dash-card-clickable" onClick={() => navigate('/guide')}>
-          <span className="dash-label">Guía Asistida</span>
-          <BrainIcon size={48} />
-          <span className="dash-value">Ver ahora</span>
-        </div>
-
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/wishlist')}>
           <span className="dash-label">Dinero Ahorrado</span>
           <MoneyBagIcon size={48} />
@@ -286,6 +280,12 @@ export default function Dashboard() {
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/games')}>
           <span className="dash-label">Juegos</span>
           <GamepadIcon size={48} />
+          <span className="dash-value">Ver ahora</span>
+        </div>
+
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/guide')}>
+          <span className="dash-label">Guía Asistida</span>
+          <BrainIcon size={48} />
           <span className="dash-value">Ver ahora</span>
         </div>
       </div>
