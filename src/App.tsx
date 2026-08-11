@@ -11,6 +11,8 @@ import LifeRecovered from './pages/LifeRecovered';
 import Achievements from './pages/Achievements';
 import Wishlist from './pages/Wishlist';
 import Medals from './pages/Medals';
+import Cravings from './pages/Cravings';
+import Missions from './pages/Missions';
 import Profile from './pages/Profile';
 import Games from './pages/Games';
 import Tetris from './pages/Tetris';
@@ -97,6 +99,8 @@ function Layout() {
           <Route path="/guide" element={<Guide />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/medals" element={<Medals />} />
+          <Route path="/cravings" element={<Cravings />} />
+          <Route path="/missions" element={<Missions />} />
           <Route path="/health" element={<Health />} />
           <Route path="/life" element={<LifeRecovered />} />
           <Route path="/achievements" element={<Achievements />} />

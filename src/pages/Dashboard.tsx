@@ -4,8 +4,10 @@ import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { useTriggersStore } from '../store/triggersStore';
+import { useCravingsStore } from '../store/cravingsStore';
+import { useMissionsStore, DAILY_MISSIONS } from '../store/missionsStore';
 import { X, Save, Trash2, Camera, XCircle, Heart, User, Wind, UtensilsCrossed, Coffee, Beer, Hourglass, Briefcase, Eye, Activity, Moon, Smartphone, Pencil } from 'lucide-react';
-import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon } from '../components/CartoonIcons';
+import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon, MissionFlagIcon, CravingBoltIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
   calculateFreeTimeInDays, 
@@ -48,6 +50,9 @@ const TRIGGER_ICONS = {
 } as const;
 // ─────────────────────────────────────────────────────────────────────────────
 
+const dayKey = (d: Date): string =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const profile = useStore((state) => state.profile);
@@ -73,6 +78,27 @@ export default function Dashboard() {
   const [customTriggerText, setCustomTriggerText] = useState('');
   const [savedTip, setSavedTip] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+
+  // Cravings / Missions state
+  const cravingCount = useCravingsStore((state) => state.entries.length);
+  const missionCompleted = useMissionsStore((state) => state.completed);
+
+  const missionStreak = (() => {
+    const isDayDone = (d: Date) => {
+      const done = missionCompleted[dayKey(d)] || [];
+      return DAILY_MISSIONS.every((m) => done.includes(m.id));
+    };
+    let count = 0;
+    let cursor = new Date();
+    if (!isDayDone(cursor)) {
+      cursor = new Date(cursor.getTime() - 86400000);
+    }
+    while (isDayDone(cursor)) {
+      count++;
+      cursor = new Date(cursor.getTime() - 86400000);
+    }
+    return count;
+  })();
 
   const triggerRanking = TRIGGER_OPTIONS
     .map((opt) => ({ ...opt, count: triggerEntries.filter((e) => e.trigger === opt.key).length }))
@@ -234,6 +260,14 @@ export default function Dashboard() {
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/missions')}>
+          <span className="dash-label">Misiones Diarias</span>
+          <MissionFlagIcon size={48} />
+          <span className="dash-value">
+            {missionStreak > 0 ? `${missionStreak} ${missionStreak === 1 ? 'día' : 'días'} de racha` : 'Completá hoy'}
+          </span>
+        </div>
+
         <div
           className="dash-card dash-card-clickable dash-card-trigger"
           onClick={() => { setShowTrigger(true); setSavedTip(null); setSelectedTrigger(null); }}
@@ -244,6 +278,16 @@ export default function Dashboard() {
             {triggerEntries.length > 0
               ? `${triggerEntries.length} registrado${triggerEntries.length === 1 ? '' : 's'}`
               : 'Para prepararte mejor'}
+          </span>
+        </div>
+
+        <div className="dash-card dash-card-clickable" onClick={() => navigate('/cravings')}>
+          <span className="dash-label">Antojos</span>
+          <CravingBoltIcon size={48} />
+          <span className="dash-value">
+            {cravingCount > 0
+              ? `${cravingCount} registrado${cravingCount === 1 ? '' : 's'}`
+              : 'Registrá tu intensidad'}
           </span>
         </div>
 

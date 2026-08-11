@@ -2,6 +2,9 @@ import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useMotivationStore } from '../store/motivationStore';
+import { useTriggersStore } from '../store/triggersStore';
+import { useCravingsStore } from '../store/cravingsStore';
+import { useMissionsStore } from '../store/missionsStore';
 import { useAuthStore, snapshotStores } from '../store/authStore';
 import { isCloudReady, cloudSaveData } from './supabase';
 
@@ -56,6 +59,9 @@ useStore.subscribe(schedulePush);
 useDiaryStore.subscribe(schedulePush);
 useWishlistStore.subscribe(schedulePush);
 useMotivationStore.subscribe(schedulePush);
+useTriggersStore.subscribe(schedulePush);
+useCravingsStore.subscribe(schedulePush);
+useMissionsStore.subscribe(schedulePush);
 
 function flushOnLeave() {
   if (timer !== null) {

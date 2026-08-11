@@ -299,3 +299,27 @@ export function TriggerEyesIcon({ size = 36 }: IconProps) {
     </svg>
   );
 }
+
+export function MissionFlagIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <line x1="15" y1="8" x2="15" y2="58" stroke="#8D6E63" strokeWidth="5" strokeLinecap="round" />
+      <path d="M17 12 L55 21 L17 32 Z" fill="#FF7043" stroke="#D84315" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M19 38 L23 46 L19 54 L15 46 Z" fill="#FFD54F" stroke="#F9A825" strokeWidth="2" strokeLinejoin="round" />
+      <line x1="19" y1="46" x2="31" y2="46" stroke="#F9A825" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="22" cy="14" r="1.6" fill="#FFF8E1" />
+    </svg>
+  );
+}
+
+export function CravingBoltIcon({ size = 36 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className="dash-icon">
+      <circle cx="32" cy="32" r="22" fill="#FFE0B2" stroke="#F9A825" strokeWidth="2.5" />
+      <path d="M37 12 L19 35 L29 35 L25 54 L46 27 L33 27 Z" fill="#FFB300" stroke="#F57F17" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="27" cy="21" r="1.6" fill="#FFF8E1" />
+      <circle cx="24" cy="40" r="1.6" fill="#F57F17" opacity="0.6" />
+      <circle cx="40" cy="43" r="1.6" fill="#F57F17" opacity="0.6" />
+    </svg>
+  );
+}

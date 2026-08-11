@@ -18,6 +18,8 @@ import {
 } from '../core/supabase';
 import { supabase } from '../core/supabaseClient';
 import { useTriggersStore, TriggerEntry } from './triggersStore';
+import { useCravingsStore, CravingEntry } from './cravingsStore';
+import { useMissionsStore } from './missionsStore';
 
 export interface AccountData {
   profile: UserProfileData | null;
@@ -26,6 +28,8 @@ export interface AccountData {
   motivationPhoto: string | null;
   motivationText: string;
   triggers?: TriggerEntry[];
+  cravings?: CravingEntry[];
+  missions?: Record<string, string[]>;
 }
 
 export interface LocalAccount {
@@ -73,6 +77,8 @@ function emptyData(): AccountData {
     motivationPhoto: null,
     motivationText: '',
     triggers: [],
+    cravings: [],
+    missions: {},
   };
 }
 
@@ -95,6 +101,20 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
   }
   const triggers = [...byTriggerId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
+  const byCravingId = new Map<string, CravingEntry>();
+  const localCravings = local.cravings || [];
+  const cloudCravings = cloud.cravings || [];
+  for (const entry of [...localCravings, ...cloudCravings]) {
+    byCravingId.set(entry.id, entry);
+  }
+  const cravings = [...byCravingId.values()].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
+  const missions: Record<string, string[]> = {};
+  const missionDates = new Set([...Object.keys(local.missions || {}), ...Object.keys(cloud.missions || {})]);
+  for (const date of missionDates) {
+    missions[date] = [...new Set([...(local.missions?.[date] || []), ...(cloud.missions?.[date] || [])])];
+  }
+
   return {
     profile: cloud.profile ?? local.profile,
     diary,
@@ -102,6 +122,8 @@ function mergeData(cloud: AccountData | null | undefined, local: AccountData | n
     motivationPhoto: cloud.motivationPhoto ?? local.motivationPhoto,
     motivationText: cloud.motivationText || local.motivationText,
     triggers,
+    cravings,
+    missions,
   };
 }
 
@@ -113,6 +135,8 @@ export function snapshotStores(): AccountData {
     motivationPhoto: useMotivationStore.getState().photo,
     motivationText: useMotivationStore.getState().text,
     triggers: useTriggersStore.getState().entries,
+    cravings: useCravingsStore.getState().entries,
+    missions: useMissionsStore.getState().completed,
   };
 }
 
@@ -122,6 +146,8 @@ export function loadIntoStores(data: AccountData) {
   useWishlistStore.setState({ goals: data.goals });
   useMotivationStore.setState({ photo: data.motivationPhoto, text: data.motivationText });
   useTriggersStore.setState({ entries: data.triggers || [] });
+  useCravingsStore.setState({ entries: data.cravings || [] });
+  useMissionsStore.setState({ completed: data.missions || {} });
 }
 
 function clearStores() {
@@ -130,6 +156,8 @@ function clearStores() {
   useWishlistStore.setState({ goals: defaultGoals() });
   useMotivationStore.setState({ photo: null, text: '' });
   useTriggersStore.setState({ entries: [] });
+  useCravingsStore.setState({ entries: [] });
+  useMissionsStore.setState({ completed: {} });
 }
 
 function hasData(data: AccountData | null | undefined): data is AccountData {
@@ -139,6 +167,8 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   if (data.motivationPhoto) return true;
   if (data.motivationText) return true;
   if (data.triggers && data.triggers.length > 0) return true;
+  if (data.cravings && data.cravings.length > 0) return true;
+  if (data.missions && Object.keys(data.missions).length > 0) return true;
   return false;
 }
 
