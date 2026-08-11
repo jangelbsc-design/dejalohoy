@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { useDiaryStore } from '../store/diaryStore';
 import { useMotivationStore } from '../store/motivationStore';
 import { useTriggersStore } from '../store/triggersStore';
-import { X, Save, Trash2, Camera, XCircle, Heart, User, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Save, Trash2, Camera, XCircle, Heart, User, Wind, UtensilsCrossed, Coffee, Beer, Hourglass, Briefcase, Eye, Activity, Moon, Smartphone, Pencil } from 'lucide-react';
 import { MoneyBagIcon, BrokenCigaretteIcon, SmilingHeartIcon, ClockFaceIcon, TargetIcon, OpenBookIcon, StopHandIcon, BrainIcon, GamepadIcon, TriggerEyesIcon } from '../components/CartoonIcons';
 import { 
   calculateFreeTime, 
@@ -32,6 +32,20 @@ const TRIGGER_OPTIONS = [
 ] as const;
 
 type TriggerKey = (typeof TRIGGER_OPTIONS)[number]['key'];
+
+const TRIGGER_ICONS = {
+  estres: Wind,
+  despues_comer: UtensilsCrossed,
+  cafe: Coffee,
+  alcohol: Beer,
+  aburrimiento: Hourglass,
+  trabajo: Briefcase,
+  ver_fumar: Eye,
+  ansiedad: Activity,
+  noche: Moon,
+  redes: Smartphone,
+  otro: Pencil,
+} as const;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
@@ -58,7 +72,6 @@ export default function Dashboard() {
   const [selectedTrigger, setSelectedTrigger] = useState<TriggerKey | null>(null);
   const [customTriggerText, setCustomTriggerText] = useState('');
   const [savedTip, setSavedTip] = useState<string | null>(null);
-  const [showRanking, setShowRanking] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
   const triggerRanking = TRIGGER_OPTIONS
@@ -80,7 +93,6 @@ export default function Dashboard() {
     setSelectedTrigger(null);
     setCustomTriggerText('');
     setSavedTip(null);
-    setShowRanking(false);
     setShowHistory(false);
   };
 
@@ -228,6 +240,19 @@ export default function Dashboard() {
           <span className="dash-value">{safeNumber(cigs)}</span>
         </div>
 
+        <div
+          className="dash-card dash-card-clickable dash-card-trigger"
+          onClick={() => { setShowTrigger(true); setSavedTip(null); setSelectedTrigger(null); }}
+        >
+          <span className="dash-label">Identificar disparador</span>
+          <TriggerEyesIcon size={48} />
+          <span className="dash-value">
+            {triggerEntries.length > 0
+              ? `${triggerEntries.length} registrado${triggerEntries.length === 1 ? '' : 's'}`
+              : 'Para prepararte mejor'}
+          </span>
+        </div>
+
         <div className="dash-card dash-card-clickable" onClick={() => navigate('/health')}>
           <span className="dash-label">Salud Ganada</span>
           <SmilingHeartIcon size={48} />
@@ -262,19 +287,6 @@ export default function Dashboard() {
           <span className="dash-label">Juegos</span>
           <GamepadIcon size={48} />
           <span className="dash-value">Ver ahora</span>
-        </div>
-
-        <div
-          className="dash-card dash-card-clickable dash-card-trigger"
-          onClick={() => { setShowTrigger(true); setSavedTip(null); setSelectedTrigger(null); }}
-        >
-          <span className="dash-label">Identificar disparador</span>
-          <TriggerEyesIcon size={48} />
-          <span className="dash-value">
-            {triggerEntries.length > 0
-              ? `${triggerEntries.length} registrado${triggerEntries.length === 1 ? '' : 's'}`
-              : 'Para prepararte mejor'}
-          </span>
         </div>
       </div>
 
@@ -427,15 +439,20 @@ export default function Dashboard() {
               <>
                 <p className="modal-body">¿Qué ocurrió justo antes de sentir el impulso?</p>
                 <div className="trigger-options">
-                  {TRIGGER_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.key}
-                      className={`trigger-option-btn${selectedTrigger === opt.key ? ' selected' : ''}`}
-                      onClick={() => { setSelectedTrigger(opt.key); setCustomTriggerText(''); }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
+                  {TRIGGER_OPTIONS.map((opt) => {
+                    const Icon = TRIGGER_ICONS[opt.key];
+                    const isSelected = selectedTrigger === opt.key;
+                    return (
+                      <button
+                        key={opt.key}
+                        className={`trigger-option-card${isSelected ? ' selected' : ''}`}
+                        onClick={() => { setSelectedTrigger(opt.key); setCustomTriggerText(''); }}
+                      >
+                        <Icon size={24} color={isSelected ? '#fff' : '#8E7AF0'} />
+                        <span>{opt.label.replace(/^\S+\s/, '')}</span>
+                      </button>
+                    );
+                  })}
                 </div>
                 {selectedTrigger === 'otro' && (
                   <textarea
@@ -478,69 +495,61 @@ export default function Dashboard() {
             {/* ── Ranking de disparadores ───────────────── */}
             {triggerEntries.length > 0 && (
               <div className="trigger-stats-section">
+                <div className="trigger-stats-toggle">
+                  <span>📊 Ranking de disparadores</span>
+                </div>
+
+                <div className="trigger-ranking">
+                  {triggerRanking.map((item, idx) => (
+                    <div key={item.key} className="trigger-rank-row">
+                      <span className="trigger-rank-medal">
+                        {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
+                      </span>
+                      <span className="trigger-rank-label">{item.label}</span>
+                      <div className="trigger-rank-bar-wrap">
+                        <div
+                          className="trigger-rank-bar"
+                          style={{ width: `${Math.round((item.count / triggerRanking[0].count) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="trigger-rank-count">{item.count}x</span>
+                    </div>
+                  ))}
+                </div>
+
                 <button
-                  className="trigger-stats-toggle"
-                  onClick={() => setShowRanking((v) => !v)}
+                  className="trigger-history-toggle"
+                  onClick={() => setShowHistory((v) => !v)}
                 >
-                  <span>📊 Disparadores registrados ({triggerEntries.length})</span>
-                  {showRanking ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  {showHistory ? 'Ocultar historial completo' : 'Ver historial completo'}
                 </button>
 
-                {showRanking && (
-                  <>
-                    <div className="trigger-ranking">
-                      {triggerRanking.map((item, idx) => (
-                        <div key={item.key} className="trigger-rank-row">
-                          <span className="trigger-rank-medal">
-                            {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
+                {showHistory && (
+                  <div className="trigger-history">
+                    {triggerEntries.map((entry) => (
+                      <div key={entry.id} className="trigger-history-item">
+                        <div className="trigger-history-left">
+                          <span className="trigger-history-label">{entry.label}</span>
+                          {entry.customText && (
+                            <span className="trigger-history-custom">"{entry.customText}"</span>
+                          )}
+                          <span className="trigger-history-date">
+                            {new Date(entry.createdAt).toLocaleString('es-ES', {
+                              day: 'numeric', month: 'short', year: 'numeric',
+                              hour: '2-digit', minute: '2-digit',
+                            })}
                           </span>
-                          <span className="trigger-rank-label">{item.label}</span>
-                          <div className="trigger-rank-bar-wrap">
-                            <div
-                              className="trigger-rank-bar"
-                              style={{ width: `${Math.round((item.count / triggerRanking[0].count) * 100)}%` }}
-                            />
-                          </div>
-                          <span className="trigger-rank-count">{item.count}x</span>
                         </div>
-                      ))}
-                    </div>
-
-                    <button
-                      className="trigger-history-toggle"
-                      onClick={() => setShowHistory((v) => !v)}
-                    >
-                      {showHistory ? 'Ocultar historial completo' : 'Ver historial completo'}
-                    </button>
-
-                    {showHistory && (
-                      <div className="trigger-history">
-                        {triggerEntries.map((entry) => (
-                          <div key={entry.id} className="trigger-history-item">
-                            <div className="trigger-history-left">
-                              <span className="trigger-history-label">{entry.label}</span>
-                              {entry.customText && (
-                                <span className="trigger-history-custom">"{entry.customText}"</span>
-                              )}
-                              <span className="trigger-history-date">
-                                {new Date(entry.createdAt).toLocaleString('es-ES', {
-                                  day: 'numeric', month: 'short', year: 'numeric',
-                                  hour: '2-digit', minute: '2-digit',
-                                })}
-                              </span>
-                            </div>
-                            <button
-                              className="diary-entry-delete"
-                              onClick={() => removeTriggerEntry(entry.id)}
-                              aria-label="Eliminar"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        ))}
+                        <button
+                          className="diary-entry-delete"
+                          onClick={() => removeTriggerEntry(entry.id)}
+                          aria-label="Eliminar"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
-                    )}
-                  </>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
