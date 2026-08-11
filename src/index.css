@@ -3842,6 +3842,141 @@ html {
   text-align: center;
 }
 
+.miss-calendar {
+  margin-top: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 16px 14px;
+  box-shadow: var(--card-shadow);
+}
+
+.miss-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.miss-cal-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  text-transform: capitalize;
+}
+
+.miss-cal-nav {
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.miss-cal-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.miss-cal-nav:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+.miss-cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.miss-cal-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.miss-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.miss-cal-cell {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.miss-cal-cell.done {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: white;
+  box-shadow: 0 3px 10px rgba(67, 233, 123, 0.35);
+}
+
+.miss-cal-cell.partial {
+  background: rgba(255, 183, 3, 0.25);
+  color: #B7791F;
+}
+
+.miss-cal-cell.future {
+  color: rgba(0, 0, 0, 0.2);
+  background: transparent;
+}
+
+.miss-cal-cell.today {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.miss-cal-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.miss-cal-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legend-dot.done {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.legend-dot.partial {
+  background: rgba(255, 183, 3, 0.4);
+}
+
+.legend-dot.today {
+  background: rgba(240, 98, 146, 0.3);
+  outline: 2px solid var(--primary);
+}
+
 .miss-list {
   display: flex;
   flex-direction: column;
