@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { useCheckinsStore, todayKey, MOOD_OPTIONS } from '../store/checkinStore';
 import { differenceInMinutes } from 'date-fns';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { StarIcon, SunIcon, RockHandIcon } from '../components/CartoonIcons';
@@ -104,38 +103,6 @@ export default function Achievements() {
       ? 100
       : Math.min((elapsedHours / (ACHIEVEMENTS[0]?.hours ?? 1)) * 100, 100);
 
-  const checkins = useCheckinsStore((state) => state.checkins);
-
-  const checkinStreak = (() => {
-    let count = 0;
-    let cursor = new Date();
-    if (!checkins[todayKey(cursor)]) {
-      cursor = new Date(cursor.getTime() - 86400000);
-    }
-    while (checkins[todayKey(cursor)]) {
-      count++;
-      cursor = new Date(cursor.getTime() - 86400000);
-    }
-    return count;
-  })();
-
-  const totalCheckins = Object.keys(checkins).length;
-
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() - (6 - i));
-    const entry = checkins[todayKey(d)];
-    const moodEmoji = MOOD_OPTIONS.find((m) => m.id === entry?.mood)?.emoji ?? '✅';
-    return {
-      key: todayKey(d),
-      entry,
-      moodEmoji,
-      label: d.toLocaleDateString('es-ES', { weekday: 'short' }),
-      isToday: i === 6,
-    };
-  });
-
   const renderSymbol = (a: Achievement, size: number) => {
     const icons = [];
     for (let j = 0; j < a.count; j++) {
@@ -195,34 +162,6 @@ export default function Achievements() {
             ? `Falta ${formatAchievementTime(next)} para el próximo logro`
             : '¡Completaste todos los logros!'}
         </span>
-      </div>
-
-      <div className="checkin-history">
-        <div className="checkin-history-header">
-          <span className="checkin-history-title">Check-in diario</span>
-          <span className="checkin-history-streak">
-            {checkinStreak > 0
-              ? `🔥 ${checkinStreak} ${checkinStreak === 1 ? 'día' : 'días'} de racha`
-              : 'Comenzá tu racha'}
-          </span>
-        </div>
-
-        <div className="checkin-week">
-          {last7Days.map((day) => (
-            <div key={day.key} className={`checkin-day${day.isToday ? ' today' : ''}`}>
-              <span className={`checkin-day-circle${day.entry ? ' filled' : ''}`}>
-                {day.moodEmoji}
-              </span>
-              <span className="checkin-day-label">{day.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <p className="checkin-history-count">
-          {totalCheckins === 0
-            ? 'Hacé tu check-in diario desde el Inicio para construir tu racha y cuidarte todos los días.'
-            : `Llevás ${totalCheckins} ${totalCheckins === 1 ? 'check-in' : 'check-ins'} registrados en total.`}
-        </p>
       </div>
 
       <div className="ach-grid">
