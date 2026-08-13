@@ -55,6 +55,7 @@ function Layout() {
   const ready = useAuthStore((state) => state.ready);
   const restoreSession = useAuthStore((state) => state.restoreSession);
   const currentUser = useAuthStore((state) => state.currentUser);
+  const userId = useAuthStore((state) => state.userId);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -80,7 +81,11 @@ function Layout() {
     );
   }
 
-  // La app entra directo (sin login obligatorio). Solo redirigimos por perfil.
+  // Usuario nuevo o sin sesión activa → login o crear cuenta.
+  if (!currentUser && !userId) {
+    return <Navigate to="/login" replace />;
+  }
+
   if (currentUser && location.pathname === '/login') {
     return <Navigate to={profile ? '/' : '/onboarding'} replace />;
   }
