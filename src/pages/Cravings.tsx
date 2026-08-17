@@ -228,7 +228,10 @@ export default function Cravings() {
                 <div className="crave-chart-bar-wrap">
                   <div
                     className="crave-chart-bar"
-                    style={{ height: `${(d.count / maxCount) * 100}%` }}
+                    style={{
+                      height: `${(d.count / maxCount) * 100}%`,
+                      background: d.count > 0 ? intensityColor(d.avg) : 'transparent',
+                    }}
                   />
                 </div>
                 <span className="crave-chart-label">{d.label}</span>

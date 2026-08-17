@@ -3680,7 +3680,6 @@ html {
 .crave-chart-bar {
   width: 100%;
   max-width: 26px;
-  background: linear-gradient(180deg, #FF5A85, #8E7AF0);
   border-radius: 8px 8px 4px 4px;
   min-height: 4px;
   transition: height 0.4s ease;
