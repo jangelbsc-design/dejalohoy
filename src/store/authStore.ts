@@ -229,32 +229,6 @@ function hasData(data: AccountData | null | undefined): data is AccountData {
   return false;
 }
 
-const SHARED_EMAIL = 'progreso@dejalohoy.app';
-const SHARED_PASSWORD = 'DejaloHoy2026!';
-
-async function ensureSharedAccount(): Promise<{ id: string; email: string } | null> {
-  if (!supabase) return null;
-
-  const signIn = await supabase.auth.signInWithPassword({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
-  if (signIn.data.user) {
-    return { id: signIn.data.user.id, email: signIn.data.user.email ?? SHARED_EMAIL };
-  }
-
-  const signUp = await supabase.auth.signUp({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
-  if (signUp.data.user) {
-    return { id: signUp.data.user.id, email: signUp.data.user.email ?? SHARED_EMAIL };
-  }
-
-  if (!signUp.error) {
-    const retry = await supabase.auth.signInWithPassword({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
-    if (retry.data.user) {
-      return { id: retry.data.user.id, email: retry.data.user.email ?? SHARED_EMAIL };
-    }
-  }
-
-  return null;
-}
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -300,17 +274,14 @@ export const useAuthStore = create<AuthState>()(
               data: { session },
             } = await supabase.auth.getSession();
 
-            let user: { id: string; email: string | undefined } | null = session?.user
-              ? { id: session.user.id, email: session.user.email }
-              : null;
-            if (!user) {
-              user = await ensureSharedAccount();
-            }
-            if (!user) {
+            // Solo restauramos una sesión real. Sin sesión activa → login o crear cuenta.
+            if (!session?.user) {
               window.clearTimeout(timer);
               finish({ currentUser: null, userId: null });
               return;
             }
+
+            const user = { id: session.user.id, email: session.user.email };
 
             const cloud = await cloudLoadData();
             const merged = mergeData(cloud, snapshotStores());
@@ -342,14 +313,15 @@ export const useAuthStore = create<AuthState>()(
           const res = await cloudRegister(name, password);
           if (!res.ok || !res.id) return { ok: false, error: res.error ?? 'No se pudo crear la cuenta.' };
 
-          const isFirstAccount = Object.keys(get().accounts).length === 0;
-          const data = isFirstAccount ? snapshotStores() : emptyData();
+          // Conservar el progreso local (ej. el del teléfono) en la nueva cuenta.
+          const data = snapshotStores();
           if (hasData(data)) {
             await cloudSaveData(data, res.id, usernameFromEmail(res.email ?? name));
+          } else {
+            clearStores();
           }
 
           set({ currentUser: displayName(res.email ?? name), userId: res.id });
-          if (!isFirstAccount) clearStores();
           return { ok: true };
         }
 
